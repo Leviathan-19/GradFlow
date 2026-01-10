@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { usersCreate } from './users_create';
+import { usersDelete } from './users_delete';
 
 const router = Router();
 
-router.post('/users', usersCreate);
+router.delete('/users/:id', usersDelete);
 
 export default router;
+

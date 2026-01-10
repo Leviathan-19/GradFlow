@@ -1,13 +1,29 @@
 {
-  "name": "infra-terraform",
+  "name": "terraform",
   "projectType": "library",
   "targets": {
+    "init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "terraform init",
+        "cwd": "terraform"
+      }
+    },
     "plan": {
       "executor": "nx:run-commands",
       "options": {
         "command": "terraform plan",
         "cwd": "terraform"
-      }
+      },
+      "dependsOn": ["init"]
+    },
+    "apply": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "terraform apply",
+        "cwd": "terraform"
+      },
+      "dependsOn": ["plan"]
     }
   }
 }
