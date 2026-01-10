@@ -3,6 +3,11 @@ import { pool } from './db';
 
 export const usersUpdate = async (req: Request, res: Response) => {
   const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ message: 'User id is required' });
+  }
+
   const {
     name,
     lastname,
@@ -45,7 +50,10 @@ export const usersUpdate = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(result.rows[0]);
+    res.json({
+      message: 'User updated successfully',
+      user: result.rows[0]
+    });
   } catch (error) {
     res.status(500).json({
       error: (error as Error).message
