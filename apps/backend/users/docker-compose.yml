@@ -1,0 +1,50 @@
+services:
+
+  users-create:
+    build:
+      context: ./users_create
+      dockerfile: Dockerfile
+    container_name: users-create
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./users_create/.env
+    restart: unless-stopped
+
+  users-delete:
+    build:
+      context: ./users_delete
+      dockerfile: Dockerfile
+    container_name: users-delete
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./users_delete/.env
+    restart: unless-stopped
+
+  users-list:
+    build:
+      context: ./users_list
+      dockerfile: Dockerfile
+    container_name: users-list
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./users_list/.env
+    restart: unless-stopped
+
+  users-search:
+    build:
+      context: ./users_search
+      dockerfile: Dockerfile
+    container_name: users-search
+    ports:
+      - "3004:3004"
+    env_file:
+      - ./users_search/.env
+    restart: unless-stopped
+
+  users-update:
+    build:
+      context: ./users_update
+      dockerfile: Dockerfil

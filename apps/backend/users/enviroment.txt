@@ -1,8 +1,0 @@
-npm init -y
-npm install express pg dotenv swagger-ui-express
-npm install -D typescript ts-node-dev @types/node @types/express @types/swagger-ui-express
-npm install -D @types/pg
-
-npx tsc --init
-
-npm install -D @types/express
