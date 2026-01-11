@@ -43,8 +43,14 @@ services:
     env_file:
       - ./users_search/.env
     restart: unless-stopped
-
   users-update:
     build:
       context: ./users_update
-      dockerfile: Dockerfil
+      dockerfile: Dockerfile
+    container_name: users-update
+    ports:
+      - "3005:3005"
+    env_file:
+      - ./users_update/.env
+    restart: unless-stopped
+
