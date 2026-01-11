@@ -16,6 +16,7 @@ export const usersUpdateSearch = async (req: Request, res: Response) => {
         u.name,
         u.lastname,
         u.email,
+        u.password,
         u.degree,
         u.telephone_number,
         u.status,
