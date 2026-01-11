@@ -54,3 +54,4 @@ services:
       - ./users_update/.env
     restart: unless-stopped
 
+
