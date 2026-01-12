@@ -7,14 +7,24 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const submit = async () => {
-    try {
-      const { token } = await login(email, password);
-      localStorage.setItem("token", token);
-      window.location.href = "/menu";
-    } catch {
-      alert("Credenciales inválidas");
+  try {
+    const response = await login(email, password);
+    console.log("LOGIN RESPONSE:", response);
+
+    localStorage.setItem("token", response.token);
+    window.location.href = "/menu";
+  } catch (error: any) {
+    console.error("LOGIN ERROR:", error);
+
+    if (error.response) {
+      console.error("STATUS:", error.response.status);
+      console.error("DATA:", error.response.data);
     }
-  };
+
+    alert("Credenciales inválidas");
+  }
+};
+
 
   return (
     <div>
