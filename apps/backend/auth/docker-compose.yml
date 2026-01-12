@@ -1,0 +1,20 @@
+services:
+  auth_login:
+    build:
+      context: ./auth_login
+    container_name: auth_login
+    ports:
+      - "3006:3006"
+    env_file:
+      - .env
+    restart: always
+
+  auth_rol:
+    build:
+      context: ./auth_rol
+    container_name: auth_rol
+    ports:
+      - "3007:3007"
+    env_file:
+      - .env
+    restart: always
