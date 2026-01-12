@@ -16,15 +16,17 @@ export const authLogin = async (req: Request, res: Response) => {
     const result = await pool.query(
       `
       SELECT
-        id,
-        name,
-        lastname,
-        email,
-        password,
-        rol_id,
-        status
-      FROM usuarios
-      WHERE email = $1
+      u.id,
+      u.name,
+      u.lastname,
+      u.email,
+      u.password,
+      r.name AS rol_name,
+      r.id AS rol_id,
+      u.status
+      FROM usuarios u
+      JOIN roles r ON u.rol_id = r.id
+      WHERE u.email = $1
       `,
       [email]
     );
@@ -47,7 +49,8 @@ export const authLogin = async (req: Request, res: Response) => {
     const token = jwt.sign(
       {
         userId: user.id,
-        rol: user.rol_id,
+        rol: user.rol_name,
+        rolId: user.rol_id,
         email: user.email,
       },
       process.env.JWT_SECRET as string,

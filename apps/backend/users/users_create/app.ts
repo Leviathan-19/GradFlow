@@ -2,16 +2,16 @@ import express from 'express';
 import usersRoutes from './users.routes';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerOptions } from './swagger';
-import { authMiddleware } from './middlewares/auth.middleware';
 
 const app = express();
-app.use(authMiddleware);
+
 app.use(express.json());
 
 // Rutas
 app.use('/api', usersRoutes);
 
-// Swagger
+// Swagger (PÚBLICO)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 
 export default app;
+
