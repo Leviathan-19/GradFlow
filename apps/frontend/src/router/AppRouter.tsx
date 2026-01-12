@@ -1,19 +1,43 @@
-// src/router/AppRouter.tsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "../pages/Login";
 import Menu from "../pages/Menu";
+import Admin from "../pages/Admin";
+
+import ProtectedRoute from "./ProtectedRoute";
+import RoleRoute from "./RoleRoute";
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Ruta raíz */}
+        {/* Root */}
         <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Login */}
+        {/* Public */}
         <Route path="/login" element={<Login />} />
 
-        {/* Main menu */}
-        <Route path="/menu" element={<Menu />} />
+        {/* Menu (any logged user) */}
+        <Route
+          path="/menu"
+          element={
+            <ProtectedRoute>
+              <Menu />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin only */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["ADMIN"]}>
+                <Admin />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/login" />} />

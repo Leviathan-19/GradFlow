@@ -4,11 +4,6 @@ import { authMiddleware } from './middlewares/auth.middleware';
 import { roleGuard } from './middlewares/role.guard';
 const router = Router();
 
-router.post(
-  '/users',
-  authMiddleware,
-  roleGuard(['ADMIN']),
-  usersCreate
-);
+router.post('/users', usersCreate);
 
 export default router;
