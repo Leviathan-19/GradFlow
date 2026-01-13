@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    fetch("http://localhost:3007/api/auth/me", {
+    fetch("http://localhost:3008/api/auth/me", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -64,6 +64,9 @@ export const useAuth = () => useContext(AuthContext);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </StrictMode>
+);
+
