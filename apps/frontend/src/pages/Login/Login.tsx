@@ -14,7 +14,7 @@ export default function Login() {
       localStorage.setItem("token", response.token);
       window.location.href = "/menu";
     } catch (error: any) {
-      alert("Credenciales inválidas");
+      alert(error.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -23,22 +23,22 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>Iniciar sesión</h2>
+        <h2>Login</h2>
 
         <input
           type="email"
-          placeholder="Correo electrónico"
+          placeholder="Email"
           onChange={e => setEmail(e.target.value)}
         />
 
         <input
           type="password"
-          placeholder="Contraseña"
+          placeholder="Password"
           onChange={e => setPassword(e.target.value)}
         />
 
         <button onClick={submit} disabled={loading}>
-          {loading ? "Entrando..." : "Entrar"}
+          {loading ? "Logging in..." : "Login"}
         </button>
       </div>
     </div>
