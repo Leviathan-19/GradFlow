@@ -4,8 +4,6 @@ import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 
 export const authLogin = async (req: Request, res: Response) => {
-  console.log("🔥 LOGIN HIT");
-  console.log("BODY:", req.body);
   const { email, password } = req.body;
 
   if (!email || !password) {

@@ -1,12 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "../pages/Login";
-import Menu from "../pages/Menu";
-import Admin from "../pages/Admin";
-
+import Login from "../pages/Login/Login";
+import Menu from "../pages/Menu/Menu";
+import Admin from "../pages/Admin/Admin";
+import RequireRole from "./RequireRole";
 import ProtectedRoute from "./ProtectedRoute";
-import RoleRoute from "./RoleRoute";
-
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -18,27 +16,10 @@ export default function AppRouter() {
         <Route path="/login" element={<Login />} />
 
         {/* Menu (any logged user) */}
-        <Route
-          path="/menu"
-          element={
-            <ProtectedRoute>
-              <Menu />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
 
         {/* Admin only */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <RoleRoute allowedRoles={["ADMIN"]}>
-                <Admin />
-              </RoleRoute>
-            </ProtectedRoute>
-          }
-        />
-
+        <Route path="/admin" element={<ProtectedRoute><RequireRole allowedRoles={["admin"]}><Admin /></RequireRole></ProtectedRoute>} />
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>

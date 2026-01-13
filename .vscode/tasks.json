@@ -18,6 +18,14 @@
 			"group": "build"
 		},
 		{
+			"label": "auth_me",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/auth/auth_me",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
 			"label": "users_create",
 			"type": "npm",
 			"script": "dev",
@@ -58,15 +66,40 @@
 			"group": "build"
 		},
 		{
+			"label": "frontend",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/frontend",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
 			"label": "start-all-backend",
 			"dependsOn": [
 				"auth_login",
 				"auth_rol",
+				"auth_me",
 				"users_create",
 				"users_delete",
 				"users_list",
 				"users_search",
 				"users_update"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": []
+		},
+		{
+			"label": "start-all-project",
+			"dependsOn": [
+				"auth_login",
+				"auth_rol",
+				"auth_me",
+				"users_create",
+				"users_delete",
+				"users_list",
+				"users_search",
+				"users_update",
+				"frontend"
 			],
 			"dependsOrder": "parallel",
 			"problemMatcher": []

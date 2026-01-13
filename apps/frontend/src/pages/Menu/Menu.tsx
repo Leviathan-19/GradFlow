@@ -1,12 +1,13 @@
-import { useAuth } from "../api/useAuth";
-import { logout } from "../api/auth";
-
+import { useAuth } from "../../api/useAuth";
+import { logout } from "../../api/auth";
+import "./Menu.css";
 export default function Menu() {
   const user = useAuth();
 
   return (
-    <div>
-      <h2>Menú principal</h2>
+    <div className="menu-container">
+      <div className="menu-card">
+        <h2>Menú principal</h2>
 
       {user ? (
         <>
@@ -22,6 +23,7 @@ export default function Menu() {
       ) : (
         <p>Cargando...</p>
       )}
+    </div>
     </div>
   );
 }
