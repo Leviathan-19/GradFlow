@@ -9,21 +9,22 @@ export default function Menu() {
       <div className="menu-card">
         <h2>Main Menu</h2>
 
-      {user ? (
-        <>
-          <p>Welcome {user.email}</p>
+        {user ? (
+          <>
+            <p>Welcome {user.email}</p>
 
-          {user.rol === "ADMIN" && (
-            <a href="/admin">Manage Users</a>
-          )}
-
-          <br />
-          <button onClick={logout}>Logout</button>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
+            {user.rol === "ADMIN" && (
+              <a href="/admin" className="menu-link">
+                Manage Users
+              </a>
+            )}
+            <br />
+            <button onClick={logout}>Logout</button>
+          </>
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
     </div>
   );
 }
