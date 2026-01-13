@@ -3,6 +3,6 @@ import { usersSearch } from './users_search';
 
 const router = Router();
 
-router.get('/users/:id', usersSearch);
+router.get('/users/search', usersSearch);
 
 export default router;

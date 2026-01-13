@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
 import { pool } from './db';
-import bcrypt from 'bcrypt';
-
-const SALT_ROUNDS = 10;
 
 export const usersUpdate = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -15,7 +12,6 @@ export const usersUpdate = async (req: Request, res: Response) => {
     name,
     lastname,
     email,
-    password,
     degree,
     telephone_number,
     status,
@@ -23,12 +19,6 @@ export const usersUpdate = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    // 1️⃣ Hash password only if provided
-    let hashedPassword: string | null = null;
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-    }
-
     const result = await pool.query(
       `
       UPDATE usuarios
@@ -36,13 +26,12 @@ export const usersUpdate = async (req: Request, res: Response) => {
         name = COALESCE($1, name),
         lastname = COALESCE($2, lastname),
         email = COALESCE($3, email),
-        password = COALESCE($4, password),
-        degree = COALESCE($5, degree),
-        telephone_number = COALESCE($6, telephone_number),
-        status = COALESCE($7, status),
-        rol_id = COALESCE($8, rol_id),
+        degree = COALESCE($4, degree),
+        telephone_number = COALESCE($5, telephone_number),
+        status = COALESCE($6, status),
+        rol_id = COALESCE($7, rol_id),
         updated_at = now()
-      WHERE id = $9
+      WHERE id = $8
       RETURNING
         id,
         name,
@@ -58,7 +47,6 @@ export const usersUpdate = async (req: Request, res: Response) => {
         name,
         lastname,
         email,
-        hashedPassword,
         degree,
         telephone_number,
         status,
