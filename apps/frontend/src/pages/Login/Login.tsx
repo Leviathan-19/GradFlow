@@ -12,7 +12,7 @@ export default function Login() {
       setLoading(true);
       const response = await login(email, password);
       localStorage.setItem("token", response.token);
-      window.location.href = "/menu";
+      window.location.href = "/test";
     } catch (error: any) {
       alert(error.message || "Invalid credentials");
     } finally {
