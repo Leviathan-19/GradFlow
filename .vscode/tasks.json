@@ -2,6 +2,14 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "api-gateway",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/api-gateway",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
 			"label": "auth_login",
 			"type": "npm",
 			"script": "dev",
@@ -76,6 +84,7 @@
 		{
 			"label": "start-all-backend",
 			"dependsOn": [
+				"api-gateway",
 				"auth_login",
 				"auth_rol",
 				"auth_me",
@@ -91,6 +100,7 @@
 		{
 			"label": "start-all-project",
 			"dependsOn": [
+				"api-gateway",
 				"auth_login",
 				"auth_rol",
 				"auth_me",
