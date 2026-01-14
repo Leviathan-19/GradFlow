@@ -16,10 +16,24 @@ export default function AppRouter() {
         <Route path="/login" element={<Login />} />
 
         {/* Menu (any logged user) */}
-        <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
+        <Route
+          path="/menu"
+          element={
+            <ProtectedRoute>
+              <Menu />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Admin only */}
-        <Route path="/admin" element={<ProtectedRoute><RequireRole allowedRoles={["admin"]}><Admin /></RequireRole></ProtectedRoute>} />
+        <Route
+          path="/admin"
+          element={
+            <RequireRole role="ADMIN">
+              <Admin />
+            </RequireRole>
+          }
+        />
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>

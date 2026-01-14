@@ -1,9 +1,14 @@
 import { useAuth } from "../../api/useAuth";
 import { logout } from "../../api/auth";
 import "./Menu.css";
+
 export default function Menu() {
-  const user = useAuth();
-  console.log("USER:", user);
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <p className="menu-loading">Loading...</p>;
+  }
+
   return (
     <div className="menu-container">
       <div className="menu-card">
@@ -13,16 +18,18 @@ export default function Menu() {
           <>
             <p>Welcome {user.email}</p>
 
-            {user && user.rol?.toUpperCase() === "ADMIN" && (
+            {user.rol?.toUpperCase() === "ADMIN" && (
               <a href="/admin" className="menu-link">
                 Manage Users
               </a>
             )}
-            <br />
-            <button onClick={logout}>Logout</button>
+
+            <button className="menu-logout" onClick={logout}>
+              Logout
+            </button>
           </>
         ) : (
-          <p>Loading...</p>
+          <p>Not authenticated</p>
         )}
       </div>
     </div>
