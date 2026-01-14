@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { pool } from './db';
 
-export const usersUpdateSearch = async (req: Request, res: Response) => {
+export const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!id) {
@@ -12,17 +12,18 @@ export const usersUpdateSearch = async (req: Request, res: Response) => {
     const result = await pool.query(
       `
       SELECT
-        u.id,
-        u.name,
-        u.lastname,
-        u.email,
-        u.password,
-        u.degree,
-        u.telephone_number,
-        u.status,
-        u.rol_id
-      FROM usuarios u
-      WHERE u.id = $1
+        id,
+        name,
+        lastname,
+        email,
+        degree,
+        telephone_number,
+        status,
+        rol_id,
+        created_at,
+        updated_at
+      FROM usuarios
+      WHERE id = $1
       `,
       [id]
     );

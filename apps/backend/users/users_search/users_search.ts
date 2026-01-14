@@ -2,11 +2,10 @@ import { Request, Response } from 'express';
 import { pool } from './db';
 
 export const usersSearch = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { email, name, rol } = req.query;
 
   try {
-    const result = await pool.query(
-      `
+    let query = `
       SELECT
         u.id,
         u.name,
@@ -19,16 +18,34 @@ export const usersSearch = async (req: Request, res: Response) => {
         r.name AS role
       FROM usuarios u
       JOIN roles r ON u.rol_id = r.id
-      WHERE u.id = $1
-      `,
-      [id]
-    );
+      WHERE 1=1
+    `;
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'User not found' });
+    const values: any[] = [];
+    let index = 1;
+
+    if (email) {
+      query += ` AND u.email = $${index++}`;
+      values.push(email);
     }
 
-    res.json(result.rows[0]);
+    if (name) {
+      query += ` AND u.name ILIKE $${index++}`;
+      values.push(`%${name}%`);
+    }
+
+    if (rol) {
+      query += ` AND r.name = $${index++}`;
+      values.push(rol);
+    }
+
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    res.json(result.rows);
   } catch (error) {
     res.status(500).json({
       error: (error as Error).message

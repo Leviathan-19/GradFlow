@@ -7,23 +7,24 @@ export default function Menu() {
   return (
     <div className="menu-container">
       <div className="menu-card">
-        <h2>Menú principal</h2>
+        <h2>Main Menu</h2>
 
-      {user ? (
-        <>
-          <p>Bienvenido {user.email}</p>
+        {user ? (
+          <>
+            <p>Welcome {user.email}</p>
 
-          {user.rol === "ADMIN" && (
-            <a href="/admin">Gestionar Usuarios</a>
-          )}
-
-          <br />
-          <button onClick={logout}>Salir</button>
-        </>
-      ) : (
-        <p>Cargando...</p>
-      )}
-    </div>
+            {user.rol === "ADMIN" && (
+              <a href="/admin" className="menu-link">
+                Manage Users
+              </a>
+            )}
+            <br />
+            <button onClick={logout}>Logout</button>
+          </>
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
     </div>
   );
 }
