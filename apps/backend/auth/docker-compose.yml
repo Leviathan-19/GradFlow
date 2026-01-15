@@ -18,3 +18,14 @@ services:
     env_file:
       - .env
     restart: always
+    
+  auth_me:
+    build:
+      context: ./auth_me
+    container_name: auth_me
+    ports:
+      - "3008:3008"
+    env_file:
+      - .env
+    restart: always
+    
