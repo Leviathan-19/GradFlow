@@ -3,3 +3,5 @@
 .terraform
 .terraform.tfstate
 .helloworld.pem
+.terraform.tfstate.backup
+gradflow-keypair.pem

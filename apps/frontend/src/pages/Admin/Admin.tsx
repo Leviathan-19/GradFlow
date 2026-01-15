@@ -45,46 +45,53 @@ export default function Admin() {
     loadUsers();
   };
 
-  return (
-    <div className="admin-container">
+return (
+  <div className="admin-page">
+    <div className="admin-card">
       <h2>User Management</h2>
 
-      <div>
+      <div className="admin-actions">
         <input
           placeholder="Search by name, email, role..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <button onClick={handleSearch}>Search</button>
-        <button onClick={() => {
-          setSelectedUser(null);
-          setShowForm(true);
-        }}>
+        <button
+          onClick={() => {
+            setSelectedUser(null);
+            setShowForm(true);
+          }}
+        >
           + Create User
         </button>
       </div>
 
-      <UserTable
-        users={users}
-        onEdit={editUser}
-        onDelete={confirmDelete}
-      />
-
-      {showDelete && selectedUser && (
-        <ConfirmDeleteModal
-          user={selectedUser}
-          onConfirm={handleDelete}
-          onCancel={() => setShowDelete(false)}
+      <div className="table-wrapper">
+        <UserTable
+          users={users}
+          onEdit={editUser}
+          onDelete={confirmDelete}
         />
-      )}
-
-      {showForm && (
-        <UserFormModal
-          user={selectedUser}
-          onClose={() => setShowForm(false)}
-          onSaved={loadUsers}
-        />
-      )}
+      </div>
     </div>
-  );
+
+    {showDelete && selectedUser && (
+      <ConfirmDeleteModal
+        user={selectedUser}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDelete(false)}
+      />
+    )}
+
+    {showForm && (
+      <UserFormModal
+        user={selectedUser}
+        onClose={() => setShowForm(false)}
+        onSaved={loadUsers}
+      />
+    )}
+  </div>
+);
+
 }

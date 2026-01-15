@@ -1,4 +1,4 @@
-# Security group para el Load Balancer
+# Security group for Load Balancer
 resource "aws_security_group" "lb" {
   name   = "lb_sg"
   vpc_id = aws_vpc.main.id

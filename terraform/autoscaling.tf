@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "app" {
 
   tag {
     key                 = "Name"
-    value               = "hello-app-instance"
+    value               = "backend-instance"
     propagate_at_launch = true
   }
 }
