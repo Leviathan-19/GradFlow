@@ -1,0 +1,59 @@
+name: Build & Push Users Domain
+
+on:
+  push:
+    branches:
+      - QA
+    paths:
+      - "apps/backend/users/**"
+
+jobs:
+  build-and-push-users:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # USERS CREATE
+      - name: Build & Push users-create
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:qa \
+            ./apps/backend/users/users_create
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:qa
+
+      # USERS DELETE
+      - name: Build & Push users-delete
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:qa \
+            ./apps/backend/users/users_delete
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:qa
+
+      # USERS LIST
+      - name: Build & Push users-list
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:qa \
+            ./apps/backend/users/users_list
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:qa
+
+      # USERS SEARCH
+      - name: Build & Push users-search
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:qa \
+            ./apps/backend/users/users_search
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:qa
+
+      # USERS UPDATE
+      - name: Build & Push users-update
+        run: |
+          docker
