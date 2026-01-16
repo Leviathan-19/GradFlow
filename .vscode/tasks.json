@@ -1,118 +1,289 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "api-gateway",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/api-gateway",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "auth_login",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/auth/auth_login",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "auth_rol",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/auth/auth_rol",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "auth_me",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/auth/auth_me",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "users_create",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/users/users_create",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "users_delete",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/users/users_delete",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "users_list",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/users/users_list",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "users_search",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/users/users_search",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "users_update",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/backend/users/users_update",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "frontend",
-			"type": "npm",
-			"script": "dev",
-			"path": "apps/frontend",
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "start-all-backend",
-			"dependsOn": [
-				"api-gateway",
-				"auth_login",
-				"auth_rol",
-				"auth_me",
-				"users_create",
-				"users_delete",
-				"users_list",
-				"users_search",
-				"users_update"
-			],
-			"dependsOrder": "parallel",
-			"problemMatcher": []
-		},
-		{
-			"label": "start-all-project",
-			"dependsOn": [
-				"api-gateway",
-				"auth_login",
-				"auth_rol",
-				"auth_me",
-				"users_create",
-				"users_delete",
-				"users_list",
-				"users_search",
-				"users_update",
-				"frontend"
-			],
-			"dependsOrder": "parallel",
-			"problemMatcher": []
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "api-gateway",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/api-gateway",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "auth_login",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/auth/auth_login",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "auth_rol",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/auth/auth_rol",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "auth_me",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/auth/auth_me",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "users_create",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/users/users_create",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "users_delete",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/users/users_delete",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "users_list",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/users/users_list",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "users_search",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/users/users_search",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "users_update",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/backend/users/users_update",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "frontend",
+      "type": "npm",
+      "script": "dev",
+      "path": "apps/frontend",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "start-all-backend",
+      "dependsOn": [
+        "api-gateway",
+        "auth_login",
+        "auth_rol",
+        "auth_me",
+        "users_create",
+        "users_delete",
+        "users_list",
+        "users_search",
+        "users_update"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "start-all-project",
+      "dependsOn": [
+        "api-gateway",
+        "auth_login",
+        "auth_rol",
+        "auth_me",
+        "users_create",
+        "users_delete",
+        "users_list",
+        "users_search",
+        "users_update",
+        "frontend"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "terraform:init:users",
+      "type": "shell",
+      "command": "terraform init",
+      "options": { "cwd": "terraform/terraform_users" }
+    },
+    {
+      "label": "terraform:init:auth",
+      "type": "shell",
+      "command": "terraform init",
+      "options": { "cwd": "terraform/terraform_auth" }
+    },
+    {
+      "label": "terraform:init:docs",
+      "type": "shell",
+      "command": "terraform init",
+      "options": { "cwd": "terraform/terraform_docs" }
+    },
+    {
+      "label": "terraform:init:edge",
+      "type": "shell",
+      "command": "terraform init",
+      "options": { "cwd": "terraform/terraform_edge" }
+    },
+    {
+      "label": "terraform:init:frontend",
+      "type": "shell",
+      "command": "terraform init",
+      "options": { "cwd": "terraform/terraform_frontend" }
+    },
+
+    {
+      "label": "terraform:init:all",
+      "dependsOn": [
+        "terraform:init:users",
+        "terraform:init:auth",
+        "terraform:init:docs",
+        "terraform:init:edge",
+        "terraform:init:frontend"
+      ],
+      "dependsOrder": "parallel"
+    },
+
+    {
+      "label": "terraform:plan:users",
+      "type": "shell",
+      "command": "terraform plan",
+      "options": { "cwd": "terraform/terraform_users" }
+    },
+    {
+      "label": "terraform:plan:auth",
+      "type": "shell",
+      "command": "terraform plan",
+      "options": { "cwd": "terraform/terraform_auth" }
+    },
+    {
+      "label": "terraform:plan:docs",
+      "type": "shell",
+      "command": "terraform plan",
+      "options": { "cwd": "terraform/terraform_docs" }
+    },
+    {
+      "label": "terraform:plan:edge",
+      "type": "shell",
+      "command": "terraform plan",
+      "options": { "cwd": "terraform/terraform_edge" }
+    },
+    {
+      "label": "terraform:plan:frontend",
+      "type": "shell",
+      "command": "terraform plan",
+      "options": { "cwd": "terraform/terraform_frontend" }
+    },
+
+    {
+      "label": "terraform:plan:all",
+      "dependsOn": [
+        "terraform:plan:users",
+        "terraform:plan:auth",
+        "terraform:plan:docs",
+        "terraform:plan:edge",
+        "terraform:plan:frontend"
+      ],
+      "dependsOrder": "parallel"
+    },
+
+    {
+      "label": "terraform:apply:users",
+      "type": "shell",
+      "command": "terraform apply",
+      "options": { "cwd": "terraform/terraform_users" }
+    },
+    {
+      "label": "terraform:apply:auth",
+      "type": "shell",
+      "command": "terraform apply",
+      "options": { "cwd": "terraform/terraform_auth" }
+    },
+    {
+      "label": "terraform:apply:docs",
+      "type": "shell",
+      "command": "terraform apply",
+      "options": { "cwd": "terraform/terraform_docs" }
+    },
+    {
+      "label": "terraform:apply:edge",
+      "type": "shell",
+      "command": "terraform apply",
+      "options": { "cwd": "terraform/terraform_edge" }
+    },
+    {
+      "label": "terraform:apply:frontend",
+      "type": "shell",
+      "command": "terraform apply",
+      "options": { "cwd": "terraform/terraform_frontend" }
+    },
+
+    {
+      "label": "terraform:apply:all",
+      "dependsOn": [
+        "terraform:apply:users",
+        "terraform:apply:auth",
+        "terraform:apply:docs",
+        "terraform:apply:edge",
+        "terraform:apply:frontend"
+      ],
+      "dependsOrder": "sequence"
+    },
+
+    {
+      "label": "terraform:destroy:users",
+      "type": "shell",
+      "command": "terraform destroy",
+      "options": { "cwd": "terraform/terraform_users" }
+    },
+    {
+      "label": "terraform:destroy:auth",
+      "type": "shell",
+      "command": "terraform destroy",
+      "options": { "cwd": "terraform/terraform_auth" }
+    },
+    {
+      "label": "terraform:destroy:docs",
+      "type": "shell",
+      "command": "terraform destroy",
+      "options": { "cwd": "terraform/terraform_docs" }
+    },
+    {
+      "label": "terraform:destroy:edge",
+      "type": "shell",
+      "command": "terraform destroy",
+      "options": { "cwd": "terraform/terraform_edge" }
+    },
+    {
+      "label": "terraform:destroy:frontend",
+      "type": "shell",
+      "command": "terraform destroy",
+      "options": { "cwd": "terraform/terraform_frontend" }
+    },
+
+    {
+      "label": "terraform:destroy:all",
+      "dependsOn": [
+        "terraform:destroy:frontend",
+        "terraform:destroy:edge",
+        "terraform:destroy:docs",
+        "terraform:destroy:auth",
+        "terraform:destroy:users"
+      ],
+      "dependsOrder": "sequence"
+    }
+  ]
 }
