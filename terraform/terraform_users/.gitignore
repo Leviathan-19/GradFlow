@@ -1,0 +1,7 @@
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+.terraform
+.terraform.tfstate
+.helloworld.pem
+.terraform.tfstate.backup
+gradflow-keypair.pem
