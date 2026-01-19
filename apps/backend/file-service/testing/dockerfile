@@ -1,0 +1,14 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV FILE_BASE_PATH=/data/gradflowtest
+
+VOLUME ["/data"]
+
+CMD ["python", "test_init_real.py"]
+
+
