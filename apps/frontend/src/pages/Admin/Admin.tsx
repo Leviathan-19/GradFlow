@@ -14,7 +14,7 @@ export default function Admin() {
   const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
-    loadUsers();
+    setUsers([]);
   }, []);
 
   const loadUsers = async () => {
@@ -23,7 +23,7 @@ export default function Admin() {
   };
 
   const handleSearch = async () => {
-    if (!search) return loadUsers();
+    if (!search.trim()) return;
     const data = await searchUsers({ q: search });
     setUsers(data);
   };
@@ -44,54 +44,49 @@ export default function Admin() {
     setShowDelete(false);
     loadUsers();
   };
+  return (
+    <div className="admin-page">
+      <div className="admin-card">
+        <h2>User Management</h2>
 
-return (
-  <div className="admin-page">
-    <div className="admin-card">
-      <h2>User Management</h2>
+        <div className="admin-actions">
+          <input
+            placeholder="Search by name, email, role..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button onClick={loadUsers}>List Users</button>
+          <button onClick={handleSearch}>Search</button>
+          <button
+            onClick={() => {
+              setSelectedUser(null);
+              setShowForm(true);
+            }}
+          >
+            + Create User
+          </button>
+        </div>
 
-      <div className="admin-actions">
-        <input
-          placeholder="Search by name, email, role..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <button onClick={handleSearch}>Search</button>
-        <button
-          onClick={() => {
-            setSelectedUser(null);
-            setShowForm(true);
-          }}
-        >
-          + Create User
-        </button>
+        <div className="table-wrapper">
+          <UserTable users={users} onEdit={editUser} onDelete={confirmDelete} />
+        </div>
       </div>
 
-      <div className="table-wrapper">
-        <UserTable
-          users={users}
-          onEdit={editUser}
-          onDelete={confirmDelete}
+      {showDelete && selectedUser && (
+        <ConfirmDeleteModal
+          user={selectedUser}
+          onConfirm={handleDelete}
+          onCancel={() => setShowDelete(false)}
         />
-      </div>
+      )}
+
+      {showForm && (
+        <UserFormModal
+          user={selectedUser}
+          onClose={() => setShowForm(false)}
+          onSaved={loadUsers}
+        />
+      )}
     </div>
-
-    {showDelete && selectedUser && (
-      <ConfirmDeleteModal
-        user={selectedUser}
-        onConfirm={handleDelete}
-        onCancel={() => setShowDelete(false)}
-      />
-    )}
-
-    {showForm && (
-      <UserFormModal
-        user={selectedUser}
-        onClose={() => setShowForm(false)}
-        onSaved={loadUsers}
-      />
-    )}
-  </div>
-);
-
+  );
 }
