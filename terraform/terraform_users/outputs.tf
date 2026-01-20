@@ -21,4 +21,14 @@ output "asg_name" {
   value       = aws_autoscaling_group.app.name
 }
 
+output "key_pair_name" {
+  description = "Nombre de la key pair utilizada por las instancias"
+  value       = local.effective_key_name
+}
+
+output "ssh_command_hint" {
+  description = "Ejemplo de comando SSH (reemplaza <ip_publica> por la IP de una instancia)"
+  value       = "ssh -i <ruta-a-tu-pem> ubuntu@<ip_publica>"
+}
+
 

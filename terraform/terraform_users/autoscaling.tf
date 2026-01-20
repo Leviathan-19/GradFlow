@@ -3,12 +3,34 @@
 ###########################################################################
 
 resource "aws_launch_template" "app" {
-  name_prefix   = "hello"
-  image_id      = "ami-0c398cb65a93047f2"
-  instance_type = "t3.micro"
-  key_name      = "nginx-server-ssh"
+  name_prefix   = "users-app-"
+  image_id      = var.ami_id
+  instance_type = var.instance_type
+  key_name      = local.effective_key_name
 
   vpc_security_group_ids = [aws_security_group.web.id]
+
+  user_data = base64encode(<<-EOT
+    #!/bin/bash
+    set -euo pipefail
+
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -y
+    apt-get install -y docker.io curl
+
+    systemctl enable --now docker
+
+    if [ -n "${var.docker_registry}" ] && [ -n "${var.docker_registry_username}" ] && [ -n "${var.docker_registry_password}" ]; then
+      echo "${var.docker_registry_password}" | docker login ${var.docker_registry} -u "${var.docker_registry_username}" --password-stdin || true
+    fi
+
+    docker pull ${var.docker_image}
+
+    docker rm -f app || true
+
+    docker run -d --restart always --name app -p 80:${var.docker_container_port} ${var.docker_image}
+  EOT
+  )
 }
 
 ###########################################################################
@@ -16,9 +38,9 @@ resource "aws_launch_template" "app" {
 ###########################################################################
 
 resource "aws_autoscaling_group" "app" {
-  max_size          = 10
-  min_size          = 2
-  desired_capacity  = 2
+  max_size          = var.max_capacity
+  min_size          = var.min_capacity
+  desired_capacity  = var.desired_capacity
 
   launch_template {
     id      = aws_launch_template.app.id
@@ -29,20 +51,20 @@ resource "aws_autoscaling_group" "app" {
   target_group_arns   = [aws_lb_target_group.app.arn]
 
   health_check_type         = "ELB"
-  health_check_grace_period = 120
+  health_check_grace_period = 300
 
   instance_refresh {
     strategy = "Rolling"
 
     preferences {
       min_healthy_percentage = 50
-      instance_warmup        = 120
+      instance_warmup        = 180
     }
   }
 
   tag {
     key                 = "Name"
-    value               = "backend-instance"
+    value               = "users-instance"
     propagate_at_launch = true
   }
 }
@@ -86,4 +108,3 @@ resource "aws_autoscaling_policy" "requests_tracking" {
 
   estimated_instance_warmup = 120
 }
-
