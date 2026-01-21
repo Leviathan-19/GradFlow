@@ -6,11 +6,43 @@ on:
       - QA
     paths:
       - "apps/backend/users/**"
+      - ".github/workflows/users.yml"
 
 jobs:
-  build-and-push-users:
+  detect-changes:
     runs-on: ubuntu-latest
+    outputs:
+      users_create: ${{ steps.filter.outputs.users_create }}
+      users_delete: ${{ steps.filter.outputs.users_delete }}
+      users_list: ${{ steps.filter.outputs.users_list }}
+      users_search: ${{ steps.filter.outputs.users_search }}
+      users_update: ${{ steps.filter.outputs.users_update }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            users_create:
+              - 'apps/backend/users/users_create/**'
+            users_delete:
+              - 'apps/backend/users/users_delete/**'
+            users_list:
+              - 'apps/backend/users/users_list/**'
+            users_search:
+              - 'apps/backend/users/users_search/**'
+            users_update:
+              - 'apps/backend/users/users_update/**'
 
+  build-and-push:
+    needs: detect-changes
+    runs-on: ubuntu-latest
+    if: |
+      needs.detect-changes.outputs.users_create == 'true' ||
+      needs.detect-changes.outputs.users_delete == 'true' ||
+      needs.detect-changes.outputs.users_list == 'true' ||
+      needs.detect-changes.outputs.users_search == 'true' ||
+      needs.detect-changes.outputs.users_update == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,39 +53,61 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # USERS CREATE
       - name: Build & Push users-create
+        if: needs.detect-changes.outputs.users_create == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:latest \
             ./apps/backend/users/users_create
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:latest
 
-      # USERS DELETE
       - name: Build & Push users-delete
+        if: needs.detect-changes.outputs.users_delete == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:latest \
             ./apps/backend/users/users_delete
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:latest
 
-      # USERS LIST
       - name: Build & Push users-list
+        if: needs.detect-changes.outputs.users_list == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:latest \
             ./apps/backend/users/users_list
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:latest
 
-      # USERS SEARCH
       - name: Build & Push users-search
+        if: needs.detect-changes.outputs.users_search == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:latest \
             ./apps/backend/users/users_search
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:latest
 
-      # USERS UPDATE
       - name: Build & Push users-update
+        if: needs.detect-changes.outputs.users_update == 'true'
         run: |
-          docker
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:latest \
+            ./apps/backend/users/users_update
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:latest
+
+      - name: Summary
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- users_create: ${{ needs.detect-changes.outputs.users_create }}" >> $GITHUB_STEP_SUMMARY
+          echo "- users_delete: ${{ needs.detect-changes.outputs.users_delete }}" >> $GITHUB_STEP_SUMMARY
+          echo "- users_list: ${{ needs.detect-changes.outputs.users_list }}" >> $GITHUB_STEP_SUMMARY
+          echo "- users_search: ${{ needs.detect-changes.outputs.users_search }}" >> $GITHUB_STEP_SUMMARY
+          echo "- users_update: ${{ needs.detect-changes.outputs.users_update }}" >> $GITHUB_STEP_SUMMARY
