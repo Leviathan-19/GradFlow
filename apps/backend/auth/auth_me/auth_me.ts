@@ -14,8 +14,10 @@ export const authMe = async (req: AuthRequest, res: Response) => {
       `
       SELECT
         u.id,
-        u.name,
-        u.lastname,
+        u.name1,
+        u.name2,
+        u.lastname1,
+        u.lastname2,
         u.email,
         u.status,
         r.id AS rol_id,
@@ -35,11 +37,14 @@ export const authMe = async (req: AuthRequest, res: Response) => {
 
     return res.status(200).json({
       id: user.id,
-      name: user.name,
-      lastname: user.lastname,
+      name1: user.name1,
+      name2: user.name2,
+      lastname1: user.lastname1,
+      lastname2: user.lastname2,
       email: user.email,
       rol: user.rol_name,
       rol_id: user.rol_id,
+      status: user.status,
     });
   } catch (error) {
     return res.status(500).json({

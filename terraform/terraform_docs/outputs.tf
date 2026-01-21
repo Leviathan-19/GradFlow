@@ -1,14 +1,21 @@
 output "loadbalancer_dns" {
-  description = "public DNS Load balancer"
+  description = "Public DNS del Load Balancer"
   value       = aws_lb.app.dns_name
 }
 
+output "loadbalancer_arn" {
+  description = "ARN del Load Balancer"
+  value       = aws_lb.app.arn
+}
+
 output "vpc_id" {
-  value = aws_vpc.main.id
+  description = "ID de la VPC"
+  value       = aws_vpc.main.id
 }
 
 output "public_subnets" {
-  value = aws_subnet.public[*].id
+  description = "IDs de las subnets públicas"
+  value       = aws_subnet.public[*].id
 }
 
 output "target_group_arn" {
@@ -16,9 +23,22 @@ output "target_group_arn" {
   value       = aws_lb_target_group.app.arn
 }
 
+output "target_group_name" {
+  description = "Nombre del Target Group"
+  value       = aws_lb_target_group.app.name
+}
+
 output "asg_name" {
   description = "Nombre del Auto Scaling Group"
   value       = aws_autoscaling_group.app.name
 }
 
+output "asg_arn" {
+  description = "ARN del Auto Scaling Group"
+  value       = aws_autoscaling_group.app.arn
+}
 
+output "iam_role_arn" {
+  description = "ARN del IAM role asignado a las instancias"
+  value       = aws_iam_role.app.arn
+}

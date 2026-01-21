@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { usersSearch } from './users_search';
+import { getUsersByFilter } from './users_search';
 
 const router = Router();
 
-router.get('/users/search', usersSearch);
+router.get('/users/search', getUsersByFilter);
 
 export default router;

@@ -1,0 +1,136 @@
+name: Build & Push File Service Domain
+
+on:
+  push:
+    branches:
+      - QA
+    paths:
+      - "apps/backend/file-service/**"
+      - ".github/workflows/file-service.yml"
+  workflow_dispatch:
+    inputs:
+      build_all:
+        description: 'Build all services regardless of changes (for first-time setup)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      files_init: ${{ steps.filter.outputs.files_init }}
+      files_update: ${{ steps.filter.outputs.files_update }}
+      files_upload: ${{ steps.filter.outputs.files_upload }}
+      files_list: ${{ steps.filter.outputs.files_list }}
+      files_download: ${{ steps.filter.outputs.files_download }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            files_init:
+              - 'apps/backend/file-service/files_init/**'
+            files_update:
+              - 'apps/backend/file-service/files_update/**'
+            files_upload:
+              - 'apps/backend/file-service/files_upload/**'
+            files_list:
+              - 'apps/backend/file-service/files_list/**'
+            files_download:
+              - 'apps/backend/file-service/files_download/**'
+
+  build-and-push:
+    needs: detect-changes
+    runs-on: ubuntu-latest
+    if: |
+      github.event.inputs.build_all == 'true' ||
+      needs.detect-changes.outputs.files_init == 'true' ||
+      needs.detect-changes.outputs.files_update == 'true' ||
+      needs.detect-changes.outputs.files_upload == 'true' ||
+      needs.detect-changes.outputs.files_list == 'true' ||
+      needs.detect-changes.outputs.files_download == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push files-init
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_init == 'true'
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-init:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-init:latest \
+            ./apps/backend/file-service/files_init
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-init:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-init:latest
+
+      - name: Build & Push files-update
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_update == 'true'
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-update:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-update:latest \
+            ./apps/backend/file-service/files_update
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-update:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-update:latest
+
+      - name: Build & Push files-upload
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_upload == 'true'
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-upload:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-upload:latest \
+            ./apps/backend/file-service/files_upload
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-upload:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-upload:latest
+
+      - name: Build & Push files-list
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_list == 'true'
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-list:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-list:latest \
+            ./apps/backend/file-service/files_list
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-list:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-list:latest
+
+      - name: Build & Push files-download
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_download == 'true'
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-download:qa \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-download:latest \
+            ./apps/backend/file-service/files_download
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-download:qa
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-download:latest
+
+      - name: Summary
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- files_init: ${{ needs.detect-changes.outputs.files_init }}" >> $GITHUB_STEP_SUMMARY
+          echo "- files_update: ${{ needs.detect-changes.outputs.files_update }}" >> $GITHUB_STEP_SUMMARY
+          echo "- files_upload: ${{ needs.detect-changes.outputs.files_upload }}" >> $GITHUB_STEP_SUMMARY
+          echo "- files_list: ${{ needs.detect-changes.outputs.files_list }}" >> $GITHUB_STEP_SUMMARY
+          echo "- files_download: ${{ needs.detect-changes.outputs.files_download }}" >> $GITHUB_STEP_SUMMARY

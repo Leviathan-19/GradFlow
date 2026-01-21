@@ -13,8 +13,10 @@ export const getUserById = async (req: Request, res: Response) => {
       `
       SELECT
         id,
-        name,
-        lastname,
+        name1,
+        name2,
+        lastname1,
+        lastname2,
         email,
         degree,
         telephone_number,

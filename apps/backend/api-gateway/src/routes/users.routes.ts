@@ -5,11 +5,24 @@ const router = Router();
 
 // CREATE USER
 router.post("/", async (req, res) => {
-  const response = await axios.post(
-    "http://localhost:3001/api/users",
-    req.body
-  );
-  res.json(response.data);
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/users",
+      req.body
+    );
+    res.status(201).json(response.data);
+  } catch (error: any) {
+    console.error("CREATE USER ERROR:", {
+      message: error.message,
+      data: error.response?.data,
+      status: error.response?.status,
+    });
+
+    res.status(error.response?.status || 500).json({
+      message: "Create user failed",
+      error: error.response?.data || error.message,
+    });
+  }
 });
 
 // DELETE USER

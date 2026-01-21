@@ -16,16 +16,20 @@ export const swaggerOptions = {
               schema: {
                 type: 'object',
                 required: [
-                  'name',
-                  'lastname',
+                  'name1',
+                  'name2',
+                  'lastname1',
+                  'lastname2',
                   'email',
                   'password',
                   'degree',
                   'rol_id'
                 ],
                 properties: {
-                  name: { type: 'string' },
-                  lastname: { type: 'string' },
+                  name1: { type: 'string' },
+                  name2: { type: 'string' },
+                  lastname1: { type: 'string' },
+                  lastname2: { type: 'string' },
                   email: { type: 'string' },
                   password: { type: 'string' },
                   degree: { type: 'string' },

@@ -12,9 +12,17 @@ export default function Login() {
       setLoading(true);
       const response = await login(email, password);
       localStorage.setItem("token", response.token);
-      window.location.href = "/test";
+      
+      // Redirect based on role
+      const userRole = response.user?.rol?.toLowerCase() || response.user?.rol_id;
+      
+      if (userRole === "admin" || userRole === "682a9457-4e4b-49b6-9674-ebfcbf68938c") {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/menu";
+      }
     } catch (error: any) {
-      alert(error.message || "Invalid credentials");
+      alert(error.response?.data?.message || error.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
