@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { pool } from './db';
 import axios from 'axios';
 
-const FILE_SERVICE_UPDATE_URL = process.env.FILE_SERVICE_UPDATE_URL || 'http://localhost:3012';
+// Use API Gateway instead of direct file-service call
+const API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://localhost:3000';
 const STUDENT_ROLE_ID = 'd70f1978-c472-4cba-a70f-432337f19e9f';
 
 export const usersUpdate = async (req: Request, res: Response) => {
@@ -102,7 +103,7 @@ export const usersUpdate = async (req: Request, res: Response) => {
         const finalLastname1 = lastname1 || oldUser.lastname1;
         const finalLastname2 = lastname2 || oldUser.lastname2;
 
-        await axios.put(`${FILE_SERVICE_UPDATE_URL}/files/update-student-folder`, {
+        await axios.put(`${API_GATEWAY_URL}/api/files/update-student-folder`, {
           old_lastname1: oldUser.lastname1,
           old_lastname2: oldUser.lastname2,
           old_name1: oldUser.name1,
@@ -114,10 +115,14 @@ export const usersUpdate = async (req: Request, res: Response) => {
           rol_id: finalRolId,
           user_id: id
         });
-        console.log(`✅ Folder structure updated for student ${id}`);
+        console.log(`[SUCCESS] Folder structure updated for student ${id}`);
       } catch (fileError: any) {
         // Log error but don't fail the user update
-        console.error('⚠️ Error updating folder structure:', fileError.response?.data || fileError.message);
+        console.error('[ERROR] Failed to update folder structure:', {
+          userId: id,
+          error: fileError.response?.data || fileError.message,
+          status: fileError.response?.status,
+        });
         // You might want to add retry logic or queue this for later processing
       }
     }
