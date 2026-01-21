@@ -46,15 +46,20 @@ resource "aws_autoscaling_group" "app" {
   vpc_zone_identifier = aws_subnet.public[*].id
   target_group_arns   = [aws_lb_target_group.app.arn]
 
-  # Health checks mejorados
-  health_check_type         = "ELB"
+  # Health checks - Changed to EC2 to prevent unnecessary instance replacement
+  # EC2 health checks only check if instance is running, not application health
+  health_check_type         = "EC2"
   health_check_grace_period = 300
   
-  # Terminación de instancias: asegurar que se reemplacen si fallan
-  termination_policies = ["OldestInstance", "Default"]
+  # Termination policies - Changed to prevent automatic replacement
+  # Default policy only terminates when scaling down, not on health check failures
+  termination_policies = ["Default"]
   
-  # Protección contra terminación accidental durante scaling
+  # Protection against termination - Enable to prevent accidental termination
   protect_from_scale_in = false
+  
+  # Wait for signals - Give instances more time before considering them unhealthy
+  wait_for_capacity_timeout = "10m"
 
   instance_refresh {
     strategy = "Rolling"
