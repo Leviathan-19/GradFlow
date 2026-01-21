@@ -10,26 +10,22 @@ resource "aws_launch_template" "app" {
 
   vpc_security_group_ids = [aws_security_group.web.id]
 
-  user_data = base64encode(<<-EOT
-    #!/bin/bash
-    set -e
-
-    export DEBIAN_FRONTEND=noninteractive
-
-    apt-get update -y
-    apt-get install -y docker.io
-
-    systemctl enable docker
-    systemctl start docker
-
-    # Permitir usar docker sin sudo (usuario ubuntu)
-    usermod -aG docker ubuntu
-
-    # Log para debugging
-    echo "Docker instalado correctamente" > /var/log/user_data.log
-    docker --version >> /var/log/user_data.log
-    EOT
-)
+  user_data = base64encode(templatefile("${path.module}/user-data-template.sh", {
+    docker_registry          = var.docker_registry
+    docker_registry_username = var.docker_registry_username
+    docker_registry_password = var.docker_registry_password
+    dockerhub_username       = var.dockerhub_username
+    dockerhub_token          = var.dockerhub_token
+    db_host                  = var.db_host
+    db_user                  = var.db_user
+    db_password              = var.db_password
+    db_name                  = var.db_name
+    db_port                  = var.db_port
+    jwt_secret               = var.jwt_secret
+    docker_image             = var.docker_image
+    docker_container_port    = var.docker_container_port
+    loadbalancer_dns         = aws_lb.app.dns_name
+  }))
 }
 
 ###########################################################################

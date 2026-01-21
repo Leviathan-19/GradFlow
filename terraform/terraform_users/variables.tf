@@ -112,3 +112,55 @@ variable "docker_registry_password" {
   sensitive   = true
 }
 
+variable "db_host" {
+  description = "Database host"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "db_user" {
+  description = "Database user"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "db_password" {
+  description = "Database password"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+  default     = "gradflow"
+}
+
+variable "db_port" {
+  description = "Database port"
+  type        = number
+  default     = 5432
+}
+
+variable "jwt_secret" {
+  description = "JWT secret key"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "dockerhub_username" {
+  description = "Docker Hub username for pulling images"
+  type        = string
+  default     = ""
+}
+
+variable "dockerhub_token" {
+  description = "Docker Hub token for pulling images"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
