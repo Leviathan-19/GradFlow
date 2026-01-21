@@ -5,3 +5,8 @@
 .helloworld.pem
 .terraform.tfstate.backup
 gradflow-keypair.pem
+.env.users_delete
+.env.users_list
+.env.users_search
+.env.users_update
+.env.users_create
