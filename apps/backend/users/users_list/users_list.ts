@@ -6,8 +6,10 @@ export const usersList = async (_req: Request, res: Response) => {
     const result = await pool.query(`
       SELECT
         u.id,
-        u.name,
-        u.lastname,
+        u.name1,
+        u.name2,
+        u.lastname1,
+        u.lastname2,
         u.email,
         u.degree,
         u.telephone_number,

@@ -9,8 +9,10 @@ export const usersUpdate = async (req: Request, res: Response) => {
   }
 
   const {
-    name,
-    lastname,
+    name1,
+    name2,
+    lastname1,
+    lastname2,
     email,
     degree,
     telephone_number,
@@ -23,19 +25,23 @@ export const usersUpdate = async (req: Request, res: Response) => {
       `
       UPDATE usuarios
       SET
-        name = COALESCE($1, name),
-        lastname = COALESCE($2, lastname),
-        email = COALESCE($3, email),
-        degree = COALESCE($4, degree),
-        telephone_number = COALESCE($5, telephone_number),
-        status = COALESCE($6, status),
-        rol_id = COALESCE($7, rol_id),
+        name1 = COALESCE($1, name1),
+        name2 = COALESCE($2, name2),
+        lastname1 = COALESCE($3, lastname1),
+        lastname2 = COALESCE($4, lastname2),
+        email = COALESCE($5, email),
+        degree = COALESCE($6, degree),
+        telephone_number = COALESCE($7, telephone_number),
+        status = COALESCE($8, status),
+        rol_id = COALESCE($9, rol_id),
         updated_at = now()
-      WHERE id = $8
+      WHERE id = $10
       RETURNING
         id,
-        name,
-        lastname,
+        name1,
+        name2,
+        lastname1,
+        lastname2,
         email,
         degree,
         telephone_number,
@@ -44,8 +50,10 @@ export const usersUpdate = async (req: Request, res: Response) => {
         updated_at
       `,
       [
-        name,
-        lastname,
+        name1,
+        name2,
+        lastname1,
+        lastname2,
         email,
         degree,
         telephone_number,

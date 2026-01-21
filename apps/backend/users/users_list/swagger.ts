@@ -20,8 +20,10 @@ export const swaggerOptions = {
                     type: 'object',
                     properties: {
                       id: { type: 'string', format: 'uuid' },
-                      name: { type: 'string' },
-                      lastname: { type: 'string' },
+                      name1: { type: 'string' },
+                      name2: { type: 'string' },
+                      lastname1: { type: 'string' },
+                      lastname2: { type: 'string' },
                       email: { type: 'string' },
                       degree: { type: 'string' },
                       telephone_number: { type: 'string' },

@@ -1,116 +1,122 @@
 export const swaggerOptions = {
-  openapi: '3.0.0',
+  openapi: "3.0.0",
   info: {
-    title: 'Users Update Microservice',
-    version: '1.0.0',
-    description: 'Search and update user by ID'
+    title: "Users Update Microservice",
+    version: "1.0.0",
+    description: "Search and update user by ID",
   },
   paths: {
-    '/api/users/{id}': {
+    "/api/users/{id}": {
       get: {
-        summary: 'Get user by ID (for update)',
+        summary: "Get user by ID (for update)",
         parameters: [
           {
-            name: 'id',
-            in: 'path',
+            name: "id",
+            in: "path",
             required: true,
             schema: {
-              type: 'string',
-              format: 'uuid'
-            }
-          }
+              type: "string",
+              format: "uuid",
+            },
+          },
         ],
         responses: {
           200: {
-            description: 'User found',
+            description: "User found",
             content: {
-              'application/json': {
+              "application/json": {
                 schema: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    name: { type: 'string' },
-                    lastname: { type: 'string' },
-                    email: { type: 'string' },
-                    password: { type: 'string' },
-                    degree: { type: 'string' },
-                    telephone_number: { type: 'string' },
-                    status: { type: 'boolean' },
-                    rol_id: { type: 'string', format: 'uuid' }
-                  }
-                }
-              }
-            }
+                    id: { type: "string", format: "uuid" },
+                    name1: { type: "string" },
+                    name2: { type: "string" },
+                    lastname1: { type: "string" },
+                    lastname2: { type: "string" },
+                    email: { type: "string" },
+                    password: { type: "string" },
+                    degree: { type: "string" },
+                    telephone_number: { type: "string" },
+                    status: { type: "boolean" },
+                    rol_id: { type: "string", format: "uuid" },
+                  },
+                },
+              },
+            },
           },
-          404: { description: 'User not found' },
-          500: { description: 'Server error' }
-        }
+          404: { description: "User not found" },
+          500: { description: "Server error" },
+        },
       },
       put: {
-        summary: 'Update user by ID',
+        summary: "Update user by ID",
         parameters: [
           {
-            name: 'id',
-            in: 'path',
+            name: "id",
+            in: "path",
             required: true,
             schema: {
-              type: 'string',
-              format: 'uuid'
-            }
-          }
+              type: "string",
+              format: "uuid",
+            },
+          },
         ],
         requestBody: {
           required: true,
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
-                  name: { type: 'string' },
-                  lastname: { type: 'string' },
-                  email: { type: 'string' },
-                  password: { type: 'string' },
-                  degree: { type: 'string' },
-                  telephone_number: { type: 'string' },
-                  status: { type: 'boolean' },
-                  rol_id: { type: 'string', format: 'uuid' }
-                }
-              }
-            }
-          }
+                  name1: { type: "string" },
+                  name2: { type: "string" },
+                  lastname1: { type: "string" },
+                  lastname2: { type: "string" },
+                  email: { type: "string" },
+                  password: { type: "string" },
+                  degree: { type: "string" },
+                  telephone_number: { type: "string" },
+                  status: { type: "boolean" },
+                  rol_id: { type: "string", format: "uuid" },
+                },
+              },
+            },
+          },
         },
         responses: {
           200: {
-            description: 'User updated',
+            description: "User updated",
             content: {
-              'application/json': {
+              "application/json": {
                 schema: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    message: { type: 'string' },
+                    message: { type: "string" },
                     user: {
-                      type: 'object',
+                      type: "object",
                       properties: {
-                        id: { type: 'string', format: 'uuid' },
-                        name: { type: 'string' },
-                        lastname: { type: 'string' },
-                        email: { type: 'string' },
-                        degree: { type: 'string' },
-                        telephone_number: { type: 'string' },
-                        status: { type: 'boolean' },
-                        rol_id: { type: 'string', format: 'uuid' },
-                        updated_at: { type: 'string', format: 'date-time' }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        id: { type: "string", format: "uuid" },
+                        name1: { type: "string" },
+                        name2: { type: "string" },
+                        lastname1: { type: "string" },
+                        lastname2: { type: "string" },
+                        email: { type: "string" },
+                        degree: { type: "string" },
+                        telephone_number: { type: "string" },
+                        status: { type: "boolean" },
+                        rol_id: { type: "string", format: "uuid" },
+                        updated_at: { type: "string", format: "date-time" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
-          404: { description: 'User not found' },
-          500: { description: 'Server error' }
-        }
-      }
-    }
-  }
+          404: { description: "User not found" },
+          500: { description: "Server error" },
+        },
+      },
+    },
+  },
 };
