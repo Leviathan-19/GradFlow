@@ -82,6 +82,46 @@
       "group": "build"
     },
     {
+      "label": "files_init",
+      "type": "shell",
+      "command": "python -m uvicorn main:app --host 0.0.0.0 --port 3011",
+      "options": { "cwd": "apps/backend/file-service/files_init" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "files_update",
+      "type": "shell",
+      "command": "python -m uvicorn main:app --host 0.0.0.0 --port 3012",
+      "options": { "cwd": "apps/backend/file-service/files_update" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "files_upload",
+      "type": "shell",
+      "command": "python -m uvicorn main:app --host 0.0.0.0 --port 3013",
+      "options": { "cwd": "apps/backend/file-service/files_upload" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "files_list",
+      "type": "shell",
+      "command": "python -m uvicorn main:app --host 0.0.0.0 --port 3014",
+      "options": { "cwd": "apps/backend/file-service/files_list" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "files_download",
+      "type": "shell",
+      "command": "python -m uvicorn main:app --host 0.0.0.0 --port 3015",
+      "options": { "cwd": "apps/backend/file-service/files_download" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
       "label": "start-all-backend",
       "dependsOn": [
         "api-gateway",
@@ -92,7 +132,12 @@
         "users_delete",
         "users_list",
         "users_search",
-        "users_update"
+        "users_update",
+        "files_init",
+        "files_update",
+        "files_upload",
+        "files_list",
+        "files_download"
       ],
       "dependsOrder": "parallel",
       "problemMatcher": []
@@ -109,6 +154,11 @@
         "users_list",
         "users_search",
         "users_update",
+        "files_init",
+        "files_update",
+        "files_upload",
+        "files_list",
+        "files_download",
         "frontend"
       ],
       "dependsOrder": "parallel",
