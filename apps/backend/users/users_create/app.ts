@@ -19,7 +19,6 @@ app.get('/api/health', (_req, res) => {
 // Routes
 app.use('/api', usersRoutes);
 
-// Swagger (PUBLIC)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 
 export default app;
