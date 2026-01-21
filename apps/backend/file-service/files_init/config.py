@@ -1,8 +1,21 @@
 from pathlib import Path
 import os
+import platform
 
-# Base path for GradFlow - root of EC2 instance
-BASE_PATH = Path(os.getenv("FILE_BASE_PATH", "/gradflow"))
+# Detect if running on Windows (local development) or Linux (EC2)
+IS_WINDOWS = platform.system() == "Windows"
+
+# Base path for GradFlow
+# On Windows (local): use current directory or temp folder
+# On Linux (EC2): use /gradflow
+if IS_WINDOWS:
+    # For local Windows development, use a folder in the current directory
+    DEFAULT_BASE_PATH = Path(__file__).parent.parent.parent / "gradflow_data"
+else:
+    # For EC2 Linux instances
+    DEFAULT_BASE_PATH = Path("/gradflow")
+
+BASE_PATH = Path(os.getenv("FILE_BASE_PATH", str(DEFAULT_BASE_PATH)))
 STUDENTS_PATH = BASE_PATH / "students"
 
 # Student folder sections - can be customized
