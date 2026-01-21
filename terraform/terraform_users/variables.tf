@@ -48,11 +48,11 @@ variable "desired_capacity" {
 
 variable "max_capacity" {
   type        = number
-  description = "ASG max (AWS Academy compatible)"
+  description = "ASG max (AWS Academy compatible - máximo 5 instancias)"
   default     = 5
   validation {
-    condition     = var.max_capacity >= var.desired_capacity && var.desired_capacity >= var.min_capacity
-    error_message = "Capacidades ASG inválidas: min <= desired <= max."
+    condition     = var.max_capacity >= var.desired_capacity && var.desired_capacity >= var.min_capacity && var.max_capacity <= 5
+    error_message = "Capacidades ASG inválidas: min <= desired <= max <= 5 (límite AWS Academy)."
   }
 }
 

@@ -1,24 +1,62 @@
+###########################################################################
+########################## APPLICATION LOAD BALANCER #####################
+###########################################################################
+
 resource "aws_lb" "app" {
-  name               = "hello-lb"
+  name               = "docs-lb"
   load_balancer_type = "application"
   subnets            = aws_subnet.public[*].id
-  security_groups    = [aws_security_group.lb.id]   # SG correcto
-}
+  security_groups    = [aws_security_group.lb.id]
 
-resource "aws_lb_target_group" "app" {
-  name     = "hello-tg"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
+  enable_deletion_protection = false
+  enable_http2              = true
+  enable_cross_zone_load_balancing = true
 
-  health_check {
-    path                = "/"
-    interval            = 30
-    timeout             = 5
-    unhealthy_threshold = 2
-    healthy_threshold   = 2
+  ip_address_type = "ipv4"
+
+  tags = {
+    Name = "docs-application-lb"
   }
 }
+
+###########################################################################
+########################## TARGET GROUP ###################################
+###########################################################################
+
+resource "aws_lb_target_group" "app" {
+  name        = "docs-tg"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "instance"
+
+  health_check {
+    enabled             = true
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+    timeout             = 5
+    interval            = 30
+    path                = "/"
+    protocol            = "HTTP"
+    matcher             = "200-399"
+  }
+
+  deregistration_delay = 30
+
+  stickiness {
+    enabled         = false
+    type            = "lb_cookie"
+    cookie_duration = 86400
+  }
+
+  tags = {
+    Name = "docs-target-group"
+  }
+}
+
+###########################################################################
+########################## ALB LISTENER ###################################
+###########################################################################
 
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.app.arn

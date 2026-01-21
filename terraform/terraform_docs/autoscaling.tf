@@ -3,12 +3,59 @@
 ###########################################################################
 
 resource "aws_launch_template" "app" {
-  name_prefix   = "hello"
-  image_id      = "ami-0c398cb65a93047f2"
-  instance_type = "t3.micro"
-  key_name      = "nginx-server-ssh"
+  name_prefix   = "docs-app-"
+  image_id      = var.ami_id
+  instance_type = var.instance_type
+  key_name      = local.effective_key_name
 
   vpc_security_group_ids = [aws_security_group.web.id]
+
+  user_data = base64encode(<<-EOT
+    #!/bin/bash
+    set -euo pipefail
+
+    export DEBIAN_FRONTEND=noninteractive
+    
+    apt-get update -y
+    apt-get install -y docker.io curl awscli jq
+
+    systemctl enable --now docker
+
+    INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+    REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
+    
+    EIP_ALLOCATION_IDS=($(aws ec2 describe-addresses \
+      --region $REGION \
+      --query 'Addresses[?AssociationId==null].AllocationId' \
+      --output text 2>/dev/null || true))
+    
+    if [ ${#EIP_ALLOCATION_IDS[@]} -gt 0 ] && [ -n "${EIP_ALLOCATION_IDS[0]}" ]; then
+      echo "Asociando IP elástica ${EIP_ALLOCATION_IDS[0]} a la instancia $INSTANCE_ID"
+      aws ec2 associate-address \
+        --region $REGION \
+        --instance-id $INSTANCE_ID \
+        --allocation-id ${EIP_ALLOCATION_IDS[0]} \
+        || echo "Advertencia: No se pudo asociar IP elástica"
+    else
+      echo "No hay IPs elásticas disponibles para asociar"
+    fi
+
+    if [ -n "${var.docker_registry}" ] && [ -n "${var.docker_registry_username}" ] && [ -n "${var.docker_registry_password}" ]; then
+      echo "${var.docker_registry_password}" | docker login ${var.docker_registry} -u "${var.docker_registry_username}" --password-stdin || true
+    fi
+
+    docker pull ${var.docker_image} || true
+
+    docker rm -f app || true
+
+    docker run -d --restart always --name app -p 80:${var.docker_container_port} ${var.docker_image}
+  EOT
+  )
+  
+  # IAM instance profile deshabilitado para cuentas académicas
+  # iam_instance_profile {
+  #   name = aws_iam_instance_profile.app.name
+  # }
 }
 
 ###########################################################################
@@ -16,9 +63,10 @@ resource "aws_launch_template" "app" {
 ###########################################################################
 
 resource "aws_autoscaling_group" "app" {
-  max_size          = 10
-  min_size          = 2
-  desired_capacity  = 2
+  name                = "docs-asg"
+  max_size            = var.max_capacity
+  min_size            = var.min_capacity
+  desired_capacity    = var.desired_capacity
 
   launch_template {
     id      = aws_launch_template.app.id
@@ -29,29 +77,41 @@ resource "aws_autoscaling_group" "app" {
   target_group_arns   = [aws_lb_target_group.app.arn]
 
   health_check_type         = "ELB"
-  health_check_grace_period = 120
+  health_check_grace_period = 300
+  
+  termination_policies = ["OldestInstance", "Default"]
+  protect_from_scale_in = false
 
   instance_refresh {
     strategy = "Rolling"
 
     preferences {
       min_healthy_percentage = 50
-      instance_warmup        = 120
+      instance_warmup        = 180
     }
+    
+    triggers = ["tag"]
   }
 
   tag {
     key                 = "Name"
-    value               = "backend-instance"
+    value               = "docs-instance"
+    propagate_at_launch = true
+  }
+  
+  tag {
+    key                 = "ManagedBy"
+    value               = "Terraform"
     propagate_at_launch = true
   }
 }
+
 ###########################################################################
-#################### POLICY AUTOSCALING BY CPU ############################
+################## SCALE UP POLICY (CPU > 80%) ###########################
 ###########################################################################
 
-resource "aws_autoscaling_policy" "cpu_tracking" {
-  name                   = "scale-on-cpu"
+resource "aws_autoscaling_policy" "cpu_scale_up" {
+  name                   = "scale-up-on-high-cpu"
   autoscaling_group_name = aws_autoscaling_group.app.name
   policy_type            = "TargetTrackingScaling"
 
@@ -60,30 +120,27 @@ resource "aws_autoscaling_policy" "cpu_tracking" {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
 
-    target_value = 40   # Baja CPU = reduce instancias
+    target_value = 80.0
+    disable_scale_in = false
   }
 
-  estimated_instance_warmup = 120
+  estimated_instance_warmup = 300
 }
 
-#############################
-# POLICY 2: ESCALAR POR REQUEST COUNT (ALB)
-#############################
-
-resource "aws_autoscaling_policy" "requests_tracking" {
-  name                   = "scale-on-requests"
+resource "aws_autoscaling_policy" "scale_out" {
+  name                   = "scale-out-policy"
   autoscaling_group_name = aws_autoscaling_group.app.name
-  policy_type            = "TargetTrackingScaling"
-
-  target_tracking_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ALBRequestCountPerTarget"
-      resource_label         = "${aws_lb.app.arn_suffix}/${aws_lb_target_group.app.arn_suffix}"
-    }
-
-    target_value = 10     # MENOS DE 10 peticiones por instancia = elimina instancias
-  }
-
-  estimated_instance_warmup = 120
+  adjustment_type        = "ChangeInCapacity"
+  scaling_adjustment     = 1
+  cooldown               = 300
+  policy_type            = "SimpleScaling"
 }
 
+resource "aws_autoscaling_policy" "scale_in" {
+  name                   = "scale-in-policy"
+  autoscaling_group_name = aws_autoscaling_group.app.name
+  adjustment_type        = "ChangeInCapacity"
+  scaling_adjustment     = -1
+  cooldown               = 600
+  policy_type            = "SimpleScaling"
+}
