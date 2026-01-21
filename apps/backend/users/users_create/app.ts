@@ -7,10 +7,19 @@ const app = express();
 
 app.use(express.json());
 
-// Rutas
+// Health check endpoint
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'users_create',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Routes
 app.use('/api', usersRoutes);
 
-// Swagger (PÚBLICO)
+// Swagger (PUBLIC)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 
 export default app;

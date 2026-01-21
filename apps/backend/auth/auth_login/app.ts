@@ -13,6 +13,15 @@ app.use(cors({
 
 app.use(express.json());
 
+// Health check endpoint
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'auth_login',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Routes
 app.use('/api', usersRoutes);
 
