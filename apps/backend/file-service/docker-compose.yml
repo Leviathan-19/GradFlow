@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  files-init:
+    build: ./files_init
+    container_name: files-init
+    ports:
+      - "3011:3011"
+    environment:
+      - FILE_BASE_PATH=/gradflow
+    volumes:
+      - gradflow-data:/gradflow
+    restart: unless-stopped
+
+  files-update:
+    build: ./files_update
+    container_name: files-update
+    ports:
+      - "3012:3012"
+    environment:
+      - FILE_BASE_PATH=/gradflow
+    volumes:
+      - gradflow-data:/gradflow
+    restart: unless-stopped
+
+  files-upload:
+    build: ./files_upload
+    container_name: files-upload
+    ports:
+      - "3013:3013"
+    environment:
+      - FILE_BASE_PATH=/gradflow
+    volumes:
+      - gradflow-data:/gradflow
+    restart: unless-stopped
+
+  files-list:
+    build: ./files_list
+    container_name: files-list
+    ports:
+      - "3014:3014"
+    environment:
+      - FILE_BASE_PATH=/gradflow
+    volumes:
+      - gradflow-data:/gradflow
+    restart: unless-stopped
+
+  files-download:
+    build: ./files_download
+    container_name: files-download
+    ports:
+      - "3015:3015"
+    environment:
+      - FILE_BASE_PATH=/gradflow
+    volumes:
+      - gradflow-data:/gradflow
+    restart: unless-stopped
+
+volumes:
+  gradflow-data:
+    driver: local
