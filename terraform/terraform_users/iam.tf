@@ -45,7 +45,7 @@
 #       }
 #     ]
 #   })
-# }
+# } 
 #
 # # Policy para CloudWatch (monitoreo y métricas)
 # resource "aws_iam_role_policy" "cloudwatch" {

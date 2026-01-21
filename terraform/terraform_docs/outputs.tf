@@ -38,11 +38,6 @@ output "asg_arn" {
   value       = aws_autoscaling_group.app.arn
 }
 
-output "elastic_ips_list" {
-  description = "Lista simple de IPs elásticas públicas"
-  value       = aws_eip.app[*].public_ip
-}
-
 output "iam_role_arn" {
   description = "ARN del IAM role asignado a las instancias"
   value       = aws_iam_role.app.arn
