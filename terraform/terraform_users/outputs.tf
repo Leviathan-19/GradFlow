@@ -48,27 +48,6 @@ output "ssh_command_hint" {
   value       = "ssh -i <ruta-a-tu-pem> ubuntu@<ip_publica-o-elastica>"
 }
 
-output "docker_registry" {
-  description = "Docker registry URL for pulling images"
-  value       = var.docker_registry
-}
-
-output "docker_registry_username" {
-  description = "Docker registry username"
-  value       = var.docker_registry_username
-  sensitive   = true
-}
-
-output "docker_image" {
-  description = "Docker image name"
-  value       = var.docker_image
-}
-
-output "docker_container_port" {
-  description = "Docker container port"
-  value       = var.docker_container_port
-}
-
 # IAM role output deshabilitado para cuentas académicas
 # output "iam_role_arn" {
 #   description = "ARN del IAM role asignado a las instancias"
