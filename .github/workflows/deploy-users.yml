@@ -67,7 +67,6 @@ jobs:
             echo "instance_ip=$INSTANCE_IPS" >> $GITHUB_OUTPUT
           fi
 
-      # Option 1: Deploy via SSM (Recommended for Auto Scaling Groups)
       - name: Deploy to EC2 instances via SSM
         if: |
           (github.event.inputs.deployment_method == 'ssm' || github.event.inputs.deployment_method == '') &&
@@ -89,12 +88,12 @@ jobs:
             
             # Login to Docker Hub first
             LOGIN_SCRIPT=$(cat <<'LOGINEOF'
-#!/bin/bash
-set -e
-echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-echo "Docker Hub login successful"
-LOGINEOF
-)
+          #!/bin/bash
+          set -e
+          echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+          echo "Docker Hub login successful"
+          LOGINEOF
+          )
             
             aws ssm send-command \
               --instance-ids "$INSTANCE_ID" \
@@ -108,46 +107,46 @@ LOGINEOF
               
               # Create deployment script
               DEPLOY_SCRIPT=$(cat <<DEPLOYEOF
-#!/bin/bash
-set -e
-
-SERVICE_NAME="${SERVICE}"
-IMAGE_NAME="${IMAGE_NAME}"
-
-echo "Deploying \$SERVICE_NAME..."
-
-# Stop and remove existing container
-docker stop "\$SERVICE_NAME" 2>/dev/null || true
-docker rm "\$SERVICE_NAME" 2>/dev/null || true
-
-# Pull latest image
-docker pull "\$IMAGE_NAME" || {
-  echo "Warning: Failed to pull \$IMAGE_NAME"
-  exit 1
-}
-
-# Get port based on service
-case "\$SERVICE_NAME" in
-  "users-create") PORT=3001 ;;
-  "users-delete") PORT=3002 ;;
-  "users-list") PORT=3003 ;;
-  "users-search") PORT=3004 ;;
-  "users-update") PORT=3005 ;;
-  *) PORT=3000 ;;
-esac
-
-# Run container
-docker run -d \
-  --name "\$SERVICE_NAME" \
-  --restart always \
-  -p "\$PORT:\$PORT" \
-  --env-file /home/ubuntu/.env \
-  "\$IMAGE_NAME"
-
-echo "Deployed \$SERVICE_NAME successfully on port \$PORT"
-docker ps --filter "name=\$SERVICE_NAME" --format "{{.Names}}: {{.Status}}"
-DEPLOYEOF
-)
+          #!/bin/bash
+          set -e
+          
+          SERVICE_NAME="${SERVICE}"
+          IMAGE_NAME="${IMAGE_NAME}"
+          
+          echo "Deploying \$SERVICE_NAME..."
+          
+          # Stop and remove existing container
+          docker stop "\$SERVICE_NAME" 2>/dev/null || true
+          docker rm "\$SERVICE_NAME" 2>/dev/null || true
+          
+          # Pull latest image
+          docker pull "\$IMAGE_NAME" || {
+            echo "Warning: Failed to pull \$IMAGE_NAME"
+            exit 1
+          }
+          
+          # Get port based on service
+          case "\$SERVICE_NAME" in
+            "users-create") PORT=3001 ;;
+            "users-delete") PORT=3002 ;;
+            "users-list") PORT=3003 ;;
+            "users-search") PORT=3004 ;;
+            "users-update") PORT=3005 ;;
+            *) PORT=3000 ;;
+          esac
+          
+          # Run container
+          docker run -d \
+            --name "\$SERVICE_NAME" \
+            --restart always \
+            -p "\$PORT:\$PORT" \
+            --env-file /home/ubuntu/.env \
+            "\$IMAGE_NAME"
+          
+          echo "Deployed \$SERVICE_NAME successfully on port \$PORT"
+          docker ps --filter "name=\$SERVICE_NAME" --format "{{.Names}}: {{.Status}}"
+          DEPLOYEOF
+          )
               
               # Send command via SSM
               COMMAND_ID=$(aws ssm send-command \
@@ -166,7 +165,6 @@ DEPLOYEOF
             done
           done
 
-      # Option 2: Deploy via SSH (Fallback - requires static IP or Elastic IP)
       - name: Deploy via SSH (fallback)
         if: |
           github.event.inputs.deployment_method == 'ssh' &&
@@ -225,7 +223,6 @@ DEPLOYEOF
             # Show running containers
             docker ps --filter "name=users-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
-      # Option 3: Instance Refresh (Zero-downtime deployment)
       - name: Trigger Instance Refresh
         if: github.event.inputs.deployment_method == 'instance-refresh'
         run: |
