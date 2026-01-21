@@ -38,22 +38,6 @@ output "asg_arn" {
   value       = aws_autoscaling_group.app.arn
 }
 
-output "elastic_ips" {
-  description = "IPs elásticas creadas y asignadas"
-  value = {
-    for idx, eip in aws_eip.app : "eip-${idx + 1}" => {
-      id           = eip.id
-      public_ip    = eip.public_ip
-      allocation_id = eip.allocation_id
-    }
-  }
-}
-
-output "elastic_ips_list" {
-  description = "Lista simple de IPs elásticas públicas"
-  value       = aws_eip.app[*].public_ip
-}
-
 output "key_pair_name" {
   description = "Nombre de la key pair utilizada por las instancias"
   value       = local.effective_key_name

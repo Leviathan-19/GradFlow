@@ -39,9 +39,9 @@ resource "aws_lb_target_group" "app" {
     unhealthy_threshold = 3
     timeout             = 5
     interval            = 30
-    path                = "/"
+    path                = "/health"
     protocol            = "HTTP"
-    matcher             = "200-399"  # Acepta códigos 200-399 como healthy
+    matcher             = "200"
   }
 
   # Deregistration delay para conexiones existentes

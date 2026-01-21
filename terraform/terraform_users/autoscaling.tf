@@ -12,58 +12,24 @@ resource "aws_launch_template" "app" {
 
   user_data = base64encode(<<-EOT
     #!/bin/bash
-    set -euo pipefail
+    set -e
 
     export DEBIAN_FRONTEND=noninteractive
-    
-    # Instalar dependencias
+
     apt-get update -y
-    apt-get install -y docker.io curl awscli jq
+    apt-get install -y docker.io
 
-    systemctl enable --now docker
+    systemctl enable docker
+    systemctl start docker
 
-    # Configurar AWS CLI (usar metadata de instancia)
-    INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-    REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
-    
-    # Asociar IP elástica disponible a esta instancia
-    # Obtener todas las IPs elásticas disponibles (sin asociar)
-    EIP_ALLOCATION_IDS=($(aws ec2 describe-addresses \
-      --region $REGION \
-      --query 'Addresses[?AssociationId==null].AllocationId' \
-      --output text 2>/dev/null || true))
-    
-    # Si hay IPs disponibles, asociar la primera a esta instancia
-    if [ ${#EIP_ALLOCATION_IDS[@]} -gt 0 ] && [ -n "${EIP_ALLOCATION_IDS[0]}" ]; then
-      echo "Asociando IP elástica ${EIP_ALLOCATION_IDS[0]} a la instancia $INSTANCE_ID"
-      aws ec2 associate-address \
-        --region $REGION \
-        --instance-id $INSTANCE_ID \
-        --allocation-id ${EIP_ALLOCATION_IDS[0]} \
-        || echo "Advertencia: No se pudo asociar IP elástica (puede que ya esté asociada o no haya permisos)"
-    else
-      echo "No hay IPs elásticas disponibles para asociar"
-    fi
+    # Permitir usar docker sin sudo (usuario ubuntu)
+    usermod -aG docker ubuntu
 
-    # Docker login si hay credenciales
-    if [ -n "${var.docker_registry}" ] && [ -n "${var.docker_registry_username}" ] && [ -n "${var.docker_registry_password}" ]; then
-      echo "${var.docker_registry_password}" | docker login ${var.docker_registry} -u "${var.docker_registry_username}" --password-stdin || true
-    fi
-
-    # Pull y ejecutar contenedor
-    docker pull ${var.docker_image} || true
-
-    docker rm -f app || true
-
-    docker run -d --restart always --name app -p 80:${var.docker_container_port} ${var.docker_image}
-  EOT
-  )
-  
-  # IAM role para que las instancias puedan asociar IPs elásticas
-  # IAM instance profile deshabilitado para cuentas académicas
-  # iam_instance_profile {
-  #   name = aws_iam_instance_profile.app.name
-  # }
+    # Log para debugging
+    echo "Docker instalado correctamente" > /var/log/user_data.log
+    docker --version >> /var/log/user_data.log
+    EOT
+)
 }
 
 ###########################################################################
