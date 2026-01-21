@@ -82,29 +82,8 @@ resource "aws_autoscaling_policy" "cpu_tracking" {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
 
-    target_value = 40   # Baja CPU = reduce instancias
+    target_value = 10   # Baja CPU = reduce instancias
   }
 
-  estimated_instance_warmup = 120
-}
-
-#############################
-# POLICY 2: ESCALAR POR REQUEST COUNT (ALB)
-#############################
-
-resource "aws_autoscaling_policy" "requests_tracking" {
-  name                   = "scale-on-requests"
-  autoscaling_group_name = aws_autoscaling_group.app.name
-  policy_type            = "TargetTrackingScaling"
-
-  target_tracking_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ALBRequestCountPerTarget"
-      resource_label         = "${aws_lb.app.arn_suffix}/${aws_lb_target_group.app.arn_suffix}"
-    }
-
-    target_value = 10     # MENOS DE 10 peticiones por instancia = elimina instancias
-  }
-
-  estimated_instance_warmup = 120
+  estimated_instance_warmup = 300
 }

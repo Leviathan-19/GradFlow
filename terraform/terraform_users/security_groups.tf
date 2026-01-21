@@ -9,7 +9,6 @@ resource "aws_security_group" "lb" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -27,18 +26,15 @@ resource "aws_security_group" "web" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [aws_security_group.lb.id]  # Solo permite tráfico desde el LB
+    security_groups = [aws_security_group.lb.id]
   }
 
-  dynamic "ingress" {
-    for_each = var.ssh_enabled && length(var.ssh_allowed_cidr) > 0 ? [1] : []
-    content {
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      cidr_blocks = [var.ssh_allowed_cidr]
-      description = "SSH access from your IP"
-    }
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # temporal
+    description = "SSH for CI/CD"
   }
 
   egress {
@@ -48,3 +44,4 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+

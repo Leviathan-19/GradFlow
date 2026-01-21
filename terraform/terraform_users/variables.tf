@@ -65,7 +65,7 @@ variable "ssh_enabled" {
 variable "ssh_allowed_cidr" {
   description = "CIDR (x.x.x.x/32) permitido para SSH"
   type        = string
-  default     = ""
+  default     = "0.0.0.0/0"
 }
 
 variable "key_pair_name" {
@@ -108,7 +108,7 @@ variable "docker_registry_username" {
 variable "docker_registry_password" {
   description = "Password del registry (opcional)"
   type        = string
-  default     = ""
+  default     = "" 
   sensitive   = true
 }
 
