@@ -7,6 +7,13 @@ on:
     paths:
       - "apps/backend/users/**"
       - ".github/workflows/users.yml"
+  workflow_dispatch:
+    inputs:
+      build_all:
+        description: 'Build all services regardless of changes (for first-time setup)'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   detect-changes:
@@ -38,6 +45,7 @@ jobs:
     needs: detect-changes
     runs-on: ubuntu-latest
     if: |
+      github.event.inputs.build_all == 'true' ||
       needs.detect-changes.outputs.users_create == 'true' ||
       needs.detect-changes.outputs.users_delete == 'true' ||
       needs.detect-changes.outputs.users_list == 'true' ||
@@ -54,7 +62,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build & Push users-create
-        if: needs.detect-changes.outputs.users_create == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.users_create == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:qa \
@@ -64,7 +74,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:latest
 
       - name: Build & Push users-delete
-        if: needs.detect-changes.outputs.users_delete == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.users_delete == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:qa \
@@ -74,7 +86,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:latest
 
       - name: Build & Push users-list
-        if: needs.detect-changes.outputs.users_list == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.users_list == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:qa \
@@ -84,7 +98,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:latest
 
       - name: Build & Push users-search
-        if: needs.detect-changes.outputs.users_search == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.users_search == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:qa \
@@ -94,7 +110,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:latest
 
       - name: Build & Push users-update
-        if: needs.detect-changes.outputs.users_update == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.users_update == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:qa \

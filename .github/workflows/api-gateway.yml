@@ -7,6 +7,13 @@ on:
     paths:
       - "apps/backend/api-gateway/**"
       - ".github/workflows/api-gateway.yml"
+  workflow_dispatch:
+    inputs:
+      build_all:
+        description: 'Build service regardless of changes (for first-time setup)'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   build-and-push:

@@ -7,6 +7,13 @@ on:
     paths:
       - "apps/backend/auth/**"
       - ".github/workflows/auth.yml"
+  workflow_dispatch:
+    inputs:
+      build_all:
+        description: 'Build all services regardless of changes (for first-time setup)'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   detect-changes:
@@ -32,6 +39,7 @@ jobs:
     needs: detect-changes
     runs-on: ubuntu-latest
     if: |
+      github.event.inputs.build_all == 'true' ||
       needs.detect-changes.outputs.auth_login == 'true' ||
       needs.detect-changes.outputs.auth_rol == 'true' ||
       needs.detect-changes.outputs.auth_me == 'true'
@@ -46,7 +54,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build & Push auth-login
-        if: needs.detect-changes.outputs.auth_login == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.auth_login == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:qa \
@@ -56,7 +66,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:latest
 
       - name: Build & Push auth-rol
-        if: needs.detect-changes.outputs.auth_rol == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.auth_rol == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:qa \
@@ -66,7 +78,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:latest
 
       - name: Build & Push auth-me
-        if: needs.detect-changes.outputs.auth_me == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.auth_me == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-me:qa \

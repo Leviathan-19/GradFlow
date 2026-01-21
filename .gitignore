@@ -2,6 +2,7 @@ commands.txt
 db.txt
 microservices.txt
 frontend.txt
+terraform.txt
 .nx/installation
 .nx/cache
 .nx/workspace-data

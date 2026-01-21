@@ -7,6 +7,13 @@ on:
     paths:
       - "apps/backend/file-service/**"
       - ".github/workflows/file-service.yml"
+  workflow_dispatch:
+    inputs:
+      build_all:
+        description: 'Build all services regardless of changes (for first-time setup)'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   detect-changes:
@@ -38,6 +45,7 @@ jobs:
     needs: detect-changes
     runs-on: ubuntu-latest
     if: |
+      github.event.inputs.build_all == 'true' ||
       needs.detect-changes.outputs.files_init == 'true' ||
       needs.detect-changes.outputs.files_update == 'true' ||
       needs.detect-changes.outputs.files_upload == 'true' ||
@@ -59,7 +67,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build & Push files-init
-        if: needs.detect-changes.outputs.files_init == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_init == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-init:qa \
@@ -69,7 +79,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-init:latest
 
       - name: Build & Push files-update
-        if: needs.detect-changes.outputs.files_update == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_update == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-update:qa \
@@ -79,7 +91,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-update:latest
 
       - name: Build & Push files-upload
-        if: needs.detect-changes.outputs.files_upload == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_upload == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-upload:qa \
@@ -89,7 +103,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-upload:latest
 
       - name: Build & Push files-list
-        if: needs.detect-changes.outputs.files_list == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_list == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-list:qa \
@@ -99,7 +115,9 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-list:latest
 
       - name: Build & Push files-download
-        if: needs.detect-changes.outputs.files_download == 'true'
+        if: |
+          github.event.inputs.build_all == 'true' ||
+          needs.detect-changes.outputs.files_download == 'true'
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-files-download:qa \
