@@ -9,13 +9,17 @@ const ROLE_MAP: Record<string, string> = {
 
 export default function UserFormModal({ user, onClose, onSaved }: any) {
   const [form, setForm] = useState({
-    name: user?.name || "",
-    lastname: user?.lastname || "",
+    name1: user?.name1 || "",
+    name2: user?.name2 || "",
+    lastname1: user?.lastname1 || "",
+    lastname2: user?.lastname2 || "",
     email: user?.email || "",
     password: "",
     degree: user?.degree || "",
     telephone_number: user?.telephone_number || "",
-    role: user?.role || "student",
+    role: user?.rol_id ? 
+      Object.keys(ROLE_MAP).find(key => ROLE_MAP[key] === user.rol_id) || "student"
+      : "student",
   });
 
   const handleChange = (e: any) => {
@@ -24,14 +28,16 @@ export default function UserFormModal({ user, onClose, onSaved }: any) {
 
   const handleSubmit = async () => {
     try {
-      if (!form.name || !form.lastname || !form.email || !form.degree) {
+      if (!form.name1 || !form.name2 || !form.lastname1 || !form.lastname2 || !form.email || !form.degree) {
         alert("Missing required fields");
         return;
       }
 
       const payload = {
-        name: form.name,
-        lastname: form.lastname,
+        name1: form.name1,
+        name2: form.name2,
+        lastname1: form.lastname1,
+        lastname2: form.lastname2,
         email: form.email,
         degree: form.degree,
         telephone_number: form.telephone_number,
@@ -57,11 +63,55 @@ export default function UserFormModal({ user, onClose, onSaved }: any) {
     <div className="modal">
       <h3>{user ? "Edit User" : "Create User"}</h3>
 
-      <input name="name" placeholder="Name" value={form.name} onChange={handleChange} />
-      <input name="lastname" placeholder="Lastname" value={form.lastname} onChange={handleChange} />
-      <input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
-      <input name="degree" placeholder="Degree" value={form.degree} onChange={handleChange} />
-      <input name="telephone_number" placeholder="Phone" value={form.telephone_number} onChange={handleChange} />
+      <input 
+        name="name1" 
+        placeholder="First Name" 
+        value={form.name1} 
+        onChange={handleChange} 
+        required
+      />
+      <input 
+        name="name2" 
+        placeholder="Second Name" 
+        value={form.name2} 
+        onChange={handleChange} 
+        required
+      />
+      <input 
+        name="lastname1" 
+        placeholder="First Lastname" 
+        value={form.lastname1} 
+        onChange={handleChange} 
+        required
+      />
+      <input 
+        name="lastname2" 
+        placeholder="Second Lastname" 
+        value={form.lastname2} 
+        onChange={handleChange} 
+        required
+      />
+      <input 
+        name="email" 
+        type="email"
+        placeholder="Email" 
+        value={form.email} 
+        onChange={handleChange} 
+        required
+      />
+      <input 
+        name="degree" 
+        placeholder="Degree" 
+        value={form.degree} 
+        onChange={handleChange} 
+        required
+      />
+      <input 
+        name="telephone_number" 
+        placeholder="Phone Number" 
+        value={form.telephone_number} 
+        onChange={handleChange} 
+      />
 
       <select name="role" value={form.role} onChange={handleChange}>
         <option value="admin">Admin</option>
@@ -70,7 +120,14 @@ export default function UserFormModal({ user, onClose, onSaved }: any) {
       </select>
 
       {!user && (
-        <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} />
+        <input 
+          name="password" 
+          type="password" 
+          placeholder="Password" 
+          value={form.password} 
+          onChange={handleChange} 
+          required
+        />
       )}
 
       <button onClick={handleSubmit}>Save</button>

@@ -32,7 +32,7 @@ export default function AppRouter() {
         <Route
           path="/admin"
           element={
-            <RequireRole role="ADMIN">
+            <RequireRole role="admin">
               <Admin />
             </RequireRole>
           }

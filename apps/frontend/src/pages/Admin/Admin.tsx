@@ -14,7 +14,7 @@ export default function Admin() {
   const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
-    setUsers([]);
+    loadUsers();
   }, []);
 
   const loadUsers = async () => {
