@@ -12,9 +12,6 @@ resource "local_file" "env_users_create" {
     db_name          = var.db_name
     db_port          = var.db_port
     jwt_secret       = var.jwt_secret
-    docker_registry  = var.docker_registry
-    docker_username  = var.docker_registry_username
-    docker_password  = var.docker_registry_password
   })
   filename = "${path.module}/.env.users_create"
 }
@@ -30,9 +27,6 @@ resource "local_file" "env_users_delete" {
     db_name          = var.db_name
     db_port          = var.db_port
     jwt_secret       = var.jwt_secret
-    docker_registry  = var.docker_registry
-    docker_username  = var.docker_registry_username
-    docker_password  = var.docker_registry_password
   })
   filename = "${path.module}/.env.users_delete"
 }
@@ -48,9 +42,6 @@ resource "local_file" "env_users_list" {
     db_name          = var.db_name
     db_port          = var.db_port
     jwt_secret       = var.jwt_secret
-    docker_registry  = var.docker_registry
-    docker_username  = var.docker_registry_username
-    docker_password  = var.docker_registry_password
   })
   filename = "${path.module}/.env.users_list"
 }
@@ -66,9 +57,6 @@ resource "local_file" "env_users_search" {
     db_name          = var.db_name
     db_port          = var.db_port
     jwt_secret       = var.jwt_secret
-    docker_registry  = var.docker_registry
-    docker_username  = var.docker_registry_username
-    docker_password  = var.docker_registry_password
   })
   filename = "${path.module}/.env.users_search"
 }
@@ -84,9 +72,6 @@ resource "local_file" "env_users_update" {
     db_name          = var.db_name
     db_port          = var.db_port
     jwt_secret       = var.jwt_secret
-    docker_registry  = var.docker_registry
-    docker_username  = var.docker_registry_username
-    docker_password  = var.docker_registry_password
   })
   filename = "${path.module}/.env.users_update"
 }

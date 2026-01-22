@@ -16,13 +16,6 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
-
-variable "docker_container_port" {
-  description = "Puerto interno expuesto por el contenedor"
-  type        = number
-  default     = 3000
-}
-
 variable "ami_id" {
   description = "AMI de Ubuntu (us-east-1)"
   type        = string

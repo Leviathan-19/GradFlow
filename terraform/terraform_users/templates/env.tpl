@@ -30,8 +30,3 @@ FILE_SERVICE_DOWNLOAD_URL=http://${loadbalancer_dns}
 # JWT Configuration
 JWT_SECRET=${jwt_secret}
 JWT_EXPIRES_IN=24h
-
-# Docker Registry (if needed)
-DOCKER_REGISTRY=${docker_registry}
-DOCKER_REGISTRY_USERNAME=${docker_username}
-DOCKER_REGISTRY_PASSWORD=${docker_password}
