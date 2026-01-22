@@ -25,13 +25,13 @@ When deploying to EC2 instances in Auto Scaling Groups, you have three main opti
 
 ```bash
 # If your credentials look like this, you need session token:
-aws_access_key_id = ASIA2E5L34DRYAAM4CQ3  # Starts with "ASIA" = temporary
-aws_secret_access_key = 3s6qyq43/30y6zQM4kSfuE/DJ7q3+zz59TiX0PD5
-aws_session_token = IQoJb3JpZ2luX2VjEOr...  # Long token
+aws_access_key_id =   # Starts with "ASIA" = temporary
+aws_secret_access_key = 
+aws_session_token =  # Long token
 
 # If your credentials look like this, you DON'T need session token:
-aws_access_key_id = AKIAIOSFODNN7EXAMPLE  # Starts with "AKIA" = permanent
-aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+aws_access_key_id =   # Starts with "AKIA" = permanent
+aws_secret_access_key = 
 # No session_token needed
 ```
 
