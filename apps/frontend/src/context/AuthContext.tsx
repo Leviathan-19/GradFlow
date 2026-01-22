@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   createContext,
   useContext,
@@ -5,6 +6,10 @@ import {
   useState,
 } from "react";
 import api from "../api/axios";
+=======
+import { createContext, useContext, useEffect, useState } from "react";
+import { getMe } from "../api/auth";
+>>>>>>> main
 
 type User = {
   id: string;
@@ -17,17 +22,22 @@ type User = {
   rol_id: string;
   status?: boolean;
 };
-
 type AuthContextType = {
   user: User | null;
   loading: boolean;
+<<<<<<< HEAD
   isAdmin: boolean;
   isProfessor: boolean;
   isStudent: boolean;
+=======
+>>>>>>> main
   refreshUser: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType>({
+const AuthContext = createContext<{
+  user: User | null;
+  loading: boolean;
+}>({
   user: null,
   loading: true,
   isAdmin: false,
@@ -57,8 +67,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+  console.log("🟡 AuthContext mounted");
 
+<<<<<<< HEAD
     if (!token) {
       setLoading(false);
       return;
@@ -66,6 +77,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     fetchUser().finally(() => setLoading(false));
   }, []);
+=======
+  getMe()
+    .then((data) => {
+      console.log("🟢 AUTH /me RESPONSE", data);
+      setUser(data);
+    })
+    .catch((err) => {
+      console.error("🔴 AUTH /me ERROR", err);
+      setUser(null);
+      localStorage.removeItem("token");
+    })
+    .finally(() => {
+      console.log("🟡 AuthContext finished");
+      setLoading(false);
+    });
+}, []);
+
+>>>>>>> main
 
   const refreshUser = async () => {
     await fetchUser();
@@ -90,5 +119,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     </AuthContext.Provider>
   );
 }
+const fetchMe = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setUser(null);
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:3008/api/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Unauthorized");
+
+    const data = await res.json();
+    setUser(data);
+  } catch {
+    localStorage.removeItem("token");
+    setUser(null);
+  }
+};
+
+useEffect(() => {
+  fetchMe().finally(() => setLoading(false));
+}, []);
+
+return (
+  <AuthContext.Provider value={{ user, loading, refreshUser: fetchMe }}>
+    {children}
+  </AuthContext.Provider>
+);
 
 export const useAuth = () => useContext(AuthContext);
+

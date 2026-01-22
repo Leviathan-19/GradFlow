@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "version": "2.0.0",
   "tasks": [
     {
@@ -337,3 +338,112 @@
     }
   ]
 }
+=======
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "auth_login",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/auth/auth_login",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "auth_rol",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/auth/auth_rol",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "auth_me",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/auth/auth_me",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "users_create",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/users/users_create",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "users_delete",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/users/users_delete",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "users_list",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/users/users_list",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "users_search",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/users/users_search",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "users_update",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/backend/users/users_update",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "frontend",
+			"type": "npm",
+			"script": "dev",
+			"path": "apps/frontend",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "start-all-backend",
+			"dependsOn": [
+				"auth_login",
+				"auth_rol",
+				"auth_me",
+				"users_create",
+				"users_delete",
+				"users_list",
+				"users_search",
+				"users_update"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": []
+		},
+		{
+			"label": "start-all-project",
+			"dependsOn": [
+				"auth_login",
+				"auth_rol",
+				"auth_me",
+				"users_create",
+				"users_delete",
+				"users_list",
+				"users_search",
+				"users_update",
+				"frontend"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": []
+		}
+	]
+}
+>>>>>>> main
