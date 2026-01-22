@@ -16,11 +16,6 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
-variable "docker_image" {
-  description = "Docker image"
-  type        = string
-  default     = "leviathan119/helloworld:latest"
-}
 
 variable "docker_container_port" {
   description = "Puerto interno expuesto por el contenedor"
@@ -92,26 +87,6 @@ variable "private_key_path" {
   default     = ""
 }
 
-variable "docker_registry" {
-  description = "Docker registry (opcional)"
-  type        = string
-  default     = ""
-}
-
-variable "docker_registry_username" {
-  description = "Usuario del registry (opcional)"
-  type        = string
-  default     = ""
-  sensitive   = true
-}
-
-variable "docker_registry_password" {
-  description = "Password del registry (opcional)"
-  type        = string
-  default     = "" 
-  sensitive   = true
-}
-
 variable "db_host" {
   description = "Database host"
   type        = string
@@ -136,7 +111,6 @@ variable "db_password" {
 variable "db_name" {
   description = "Database name"
   type        = string
-  default     = "gradflow"
 }
 
 variable "db_port" {
@@ -192,12 +166,6 @@ variable "docker_image_users_search" {
 
 variable "docker_image_users_update" {
   description = "Docker image for users-update service"
-  type        = string
-  default     = ""
-}
-
-variable "docker_image_api_gateway" {
-  description = "Docker image for api-gateway service"
   type        = string
   default     = ""
 }

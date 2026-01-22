@@ -25,17 +25,15 @@ usermod -aG docker ubuntu
 
 echo "Docker installed: $(docker --version)"
 
-# Docker login if credentials provided
-if [ -n "${docker_registry}" ] && [ -n "${docker_registry_username}" ] && [ -n "${docker_registry_password}" ]; then
-  echo "${docker_registry_password}" | docker login "${docker_registry}" -u "${docker_registry_username}" --password-stdin || true
-  echo "Docker registry login completed"
+# Docker Hub login
+if [ -n "${dockerhub_username}" ] && [ -n "${dockerhub_token}" ]; then
+  echo "Logging into Docker Hub..."
+  echo "${dockerhub_token}" | docker login -u "${dockerhub_username}" --password-stdin
+  echo "Docker Hub login completed"
+else
+  echo "Docker Hub credentials not provided, skipping login"
 fi
 
-# Docker Hub login if credentials provided
-if [ -n "${dockerhub_username}" ] && [ -n "${dockerhub_token}" ]; then
-  echo "${dockerhub_token}" | docker login -u "${dockerhub_username}" --password-stdin || true
-  echo "Docker Hub login completed"
-fi
 
 # Create .env file with Terraform variables
 cat > /home/ubuntu/.env <<ENVFILE
@@ -84,29 +82,32 @@ chmod 600 /home/ubuntu/.env
 echo ".env file created at /home/ubuntu/.env"
 echo "Load Balancer DNS: ${loadbalancer_dns}"
 
-# Pull Docker image if specified
-if [ -n "${docker_image}" ]; then
-  echo "Pulling Docker image: ${docker_image}"
-  docker pull "${docker_image}" || echo "Warning: Failed to pull image ${docker_image}"
-fi
+run_service () {
+  local NAME=$1
+  local IMAGE=$2
+  local PORT=$3
 
-# Stop and remove existing container if exists
-docker stop app 2>/dev/null || true
-docker rm app 2>/dev/null || true
+  if [ -z "$IMAGE" ]; then
+    echo "Skipping $NAME (no image defined)"
+    return
+  fi
 
-# Run Docker container
-if [ -n "${docker_image}" ]; then
-  echo "Starting container from image: ${docker_image}"
+  echo "Deploying $NAME from $IMAGE on port $PORT"
+
+  docker pull "$IMAGE" || echo "Warning: pull failed for $IMAGE"
+
+  docker stop "$NAME" 2>/dev/null || true
+  docker rm "$NAME" 2>/dev/null || true
+
   docker run -d \
-    --name app \
+    --name "$NAME" \
     --restart always \
-    -p 80:${docker_container_port} \
+    -p "$PORT:${docker_container_port}" \
     --env-file /home/ubuntu/.env \
-    "${docker_image}" || echo "Warning: Failed to start container"
-  
-  echo "Container started. Status:"
-  docker ps --filter "name=app" --format "{{.Names}}: {{.Status}}"
-fi
+    "$IMAGE"
+
+  docker ps --filter "name=$NAME" --format "{{.Names}}: {{.Status}}"
+}
 
 # Cleanup unused images
 docker image prune -a -f || true

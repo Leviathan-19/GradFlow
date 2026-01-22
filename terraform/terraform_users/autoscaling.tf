@@ -11,24 +11,30 @@ resource "aws_launch_template" "app" {
   vpc_security_group_ids = [aws_security_group.web.id]
 
   user_data = base64encode(templatefile("${path.module}/user-data-template.sh", {
-    docker_registry          = var.docker_registry
-    docker_registry_username = var.docker_registry_username
-    docker_registry_password = var.docker_registry_password
-    dockerhub_username       = var.dockerhub_username
-    dockerhub_token          = var.dockerhub_token
-    db_host                  = var.db_host
-    db_user                  = var.db_user
-    db_password              = var.db_password
-    db_name                  = var.db_name
-    db_port                  = var.db_port
-    jwt_secret               = var.jwt_secret
-    docker_image_users_create  = var.docker_image_users_create
-    docker_image_users_delete  = var.docker_image_users_delete
-    docker_image_users_list     = var.docker_image_users_list
-    docker_image_users_search   = var.docker_image_users_search
-    docker_image_users_update   = var.docker_image_users_update
-    docker_image_api_gateway    = var.docker_image_api_gateway
-    loadbalancer_dns         = aws_lb.app.dns_name
+    docker_registry              = var.docker_registry
+    docker_registry_username     = var.docker_registry_username
+    docker_registry_password     = var.docker_registry_password
+    dockerhub_username           = var.dockerhub_username
+    dockerhub_token              = var.dockerhub_token
+
+    db_host                      = var.db_host
+    db_user                      = var.db_user
+    db_password                  = var.db_password
+    db_name                      = var.db_name
+    db_port                      = var.db_port
+
+    jwt_secret                   = var.jwt_secret
+
+    docker_image_users_create    = var.docker_image_users_create
+    docker_image_users_delete    = var.docker_image_users_delete
+    docker_image_users_list      = var.docker_image_users_list
+    docker_image_users_search    = var.docker_image_users_search
+    docker_image_users_update    = var.docker_image_users_update
+    docker_image_api_gateway     = var.docker_image_api_gateway
+
+    docker_container_port        = var.docker_container_port
+
+    loadbalancer_dns             = aws_lb.app.dns_name
   }))
 }
 
