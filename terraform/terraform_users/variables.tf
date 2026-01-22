@@ -164,3 +164,40 @@ variable "dockerhub_token" {
   default     = ""
   sensitive   = true
 }
+
+# Docker images for each service
+variable "docker_image_users_create" {
+  description = "Docker image for users-create service"
+  type        = string
+  default     = ""
+}
+
+variable "docker_image_users_delete" {
+  description = "Docker image for users-delete service"
+  type        = string
+  default     = ""
+}
+
+variable "docker_image_users_list" {
+  description = "Docker image for users-list service"
+  type        = string
+  default     = ""
+}
+
+variable "docker_image_users_search" {
+  description = "Docker image for users-search service"
+  type        = string
+  default     = ""
+}
+
+variable "docker_image_users_update" {
+  description = "Docker image for users-update service"
+  type        = string
+  default     = ""
+}
+
+variable "docker_image_api_gateway" {
+  description = "Docker image for api-gateway service"
+  type        = string
+  default     = ""
+}

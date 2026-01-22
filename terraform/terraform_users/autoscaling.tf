@@ -22,8 +22,12 @@ resource "aws_launch_template" "app" {
     db_name                  = var.db_name
     db_port                  = var.db_port
     jwt_secret               = var.jwt_secret
-    docker_image             = var.docker_image
-    docker_container_port    = var.docker_container_port
+    docker_image_users_create  = var.docker_image_users_create
+    docker_image_users_delete  = var.docker_image_users_delete
+    docker_image_users_list     = var.docker_image_users_list
+    docker_image_users_search   = var.docker_image_users_search
+    docker_image_users_update   = var.docker_image_users_update
+    docker_image_api_gateway    = var.docker_image_api_gateway
     loadbalancer_dns         = aws_lb.app.dns_name
   }))
 }
