@@ -154,14 +154,14 @@ set -e
 
 echo "=== GradFlow update $(date) ==="
 
-docker login -u "${dockerhub_username}" -p "${dockerhub_token}" || true
+docker login -u "\${dockerhub_username}" -p "\${dockerhub_token}" || true
 
 containers=(
-  "users-create:${docker_image_users_create}:3001"
-  "users-delete:${docker_image_users_delete}:3002"
-  "users-list:${docker_image_users_list}:3003"
-  "users-search:${docker_image_users_search}:3004"
-  "users-update:${docker_image_users_update}:3005"
+  "users-create:\${docker_image_users_create}:3001"
+  "users-delete:\${docker_image_users_delete}:3002"
+  "users-list:\${docker_image_users_list}:3003"
+  "users-search:\${docker_image_users_search}:3004"
+  "users-update:\${docker_image_users_update}:3005"
 )
 
 for item in "${containers[@]}"; do
