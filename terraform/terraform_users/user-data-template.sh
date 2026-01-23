@@ -145,3 +145,76 @@ echo "Summary:"
 echo ""
 echo "Final container status:"
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# update docker users
+
+cat > /home/ubuntu/update-containers.sh <<'EOF'
+#!/bin/bash
+set -e
+
+echo "=== GradFlow update $(date) ==="
+
+docker login -u "${dockerhub_username}" -p "${dockerhub_token}" || true
+
+containers=(
+  "users-create:${docker_image_users_create}:3001"
+  "users-delete:${docker_image_users_delete}:3002"
+  "users-list:${docker_image_users_list}:3003"
+  "users-search:${docker_image_users_search}:3004"
+  "users-update:${docker_image_users_update}:3005"
+)
+
+for item in "${containers[@]}"; do
+  IFS=":" read -r name image port <<< "$item"
+
+  echo "Updating $name"
+
+  docker pull "$image" || continue
+
+  docker stop "$name" 2>/dev/null || true
+  docker rm "$name" 2>/dev/null || true
+
+  docker run -d \
+    --restart always \
+    --name "$name" \
+    -p 0.0.0.0:$port:$port \
+    --env-file /home/ubuntu/.env \
+    "$image"
+done
+
+docker image prune -af
+EOF
+
+chmod +x /home/ubuntu/update-containers.sh
+chown ubuntu:ubuntu /home/ubuntu/update-containers.sh
+
+
+cat > /etc/systemd/system/gradflow-update.service <<EOF
+[Unit]
+Description=GradFlow containers auto-update
+After=docker.service
+
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/home/ubuntu/update-containers.sh
+EOF
+
+
+cat > /etc/systemd/system/gradflow-update.timer <<EOF
+[Unit]
+Description=Run GradFlow update every 2 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=2min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+systemctl daemon-reexec
+systemctl daemon-reload
+systemctl enable gradflow-update.timer
+systemctl start gradflow-update.timer
