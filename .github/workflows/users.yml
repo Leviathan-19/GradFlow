@@ -4,53 +4,11 @@ on:
   push:
     branches:
       - QA
-    paths:
-      - "apps/backend/users/**"
-      - ".github/workflows/users.yml"
   workflow_dispatch:
-    inputs:
-      build_all:
-        description: 'Build all services regardless of changes (for first-time setup)'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      users_create: ${{ steps.filter.outputs.users_create }}
-      users_delete: ${{ steps.filter.outputs.users_delete }}
-      users_list: ${{ steps.filter.outputs.users_list }}
-      users_search: ${{ steps.filter.outputs.users_search }}
-      users_update: ${{ steps.filter.outputs.users_update }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            users_create:
-              - 'apps/backend/users/users_create/**'
-            users_delete:
-              - 'apps/backend/users/users_delete/**'
-            users_list:
-              - 'apps/backend/users/users_list/**'
-            users_search:
-              - 'apps/backend/users/users_search/**'
-            users_update:
-              - 'apps/backend/users/users_update/**'
-
   build-and-push:
-    needs: detect-changes
     runs-on: ubuntu-latest
-    if: |
-      github.event.inputs.build_all == 'true' ||
-      needs.detect-changes.outputs.users_create == 'true' ||
-      needs.detect-changes.outputs.users_delete == 'true' ||
-      needs.detect-changes.outputs.users_list == 'true' ||
-      needs.detect-changes.outputs.users_search == 'true' ||
-      needs.detect-changes.outputs.users_update == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -61,71 +19,57 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & Push users-create
-        if: |
-          github.event.inputs.build_all == 'true' ||
-          needs.detect-changes.outputs.users_create == 'true'
+      - name: Build all services with docker-compose
+        working-directory: ./apps/backend/users
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:qa \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:latest \
-            ./apps/backend/users/users_create
+          docker compose build
+
+      - name: Tag and Push users-create
+        run: |
+          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "users.*users-create" | head -1)
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:qa
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:qa
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-create:latest
 
-      - name: Build & Push users-delete
-        if: |
-          github.event.inputs.build_all == 'true' ||
-          needs.detect-changes.outputs.users_delete == 'true'
+      - name: Tag and Push users-delete
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:qa \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:latest \
-            ./apps/backend/users/users_delete
+          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "users.*users-delete" | head -1)
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:qa
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:qa
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-delete:latest
 
-      - name: Build & Push users-list
-        if: |
-          github.event.inputs.build_all == 'true' ||
-          needs.detect-changes.outputs.users_list == 'true'
+      - name: Tag and Push users-list
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:qa \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:latest \
-            ./apps/backend/users/users_list
+          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "users.*users-list" | head -1)
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:qa
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:qa
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-list:latest
 
-      - name: Build & Push users-search
-        if: |
-          github.event.inputs.build_all == 'true' ||
-          needs.detect-changes.outputs.users_search == 'true'
+      - name: Tag and Push users-search
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:qa \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:latest \
-            ./apps/backend/users/users_search
+          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "users.*users-search" | head -1)
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:qa
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:qa
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-search:latest
 
-      - name: Build & Push users-update
-        if: |
-          github.event.inputs.build_all == 'true' ||
-          needs.detect-changes.outputs.users_update == 'true'
+      - name: Tag and Push users-update
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:qa \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:latest \
-            ./apps/backend/users/users_update
+          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "users.*users-update" | head -1)
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:qa
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:qa
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-users-update:latest
 
       - name: Summary
         run: |
           echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- users_create: ${{ needs.detect-changes.outputs.users_create }}" >> $GITHUB_STEP_SUMMARY
-          echo "- users_delete: ${{ needs.detect-changes.outputs.users_delete }}" >> $GITHUB_STEP_SUMMARY
-          echo "- users_list: ${{ needs.detect-changes.outputs.users_list }}" >> $GITHUB_STEP_SUMMARY
-          echo "- users_search: ${{ needs.detect-changes.outputs.users_search }}" >> $GITHUB_STEP_SUMMARY
-          echo "- users_update: ${{ needs.detect-changes.outputs.users_update }}" >> $GITHUB_STEP_SUMMARY
+          echo "All users services built and pushed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- users-create" >> $GITHUB_STEP_SUMMARY
+          echo "- users-delete" >> $GITHUB_STEP_SUMMARY
+          echo "- users-list" >> $GITHUB_STEP_SUMMARY
+          echo "- users-search" >> $GITHUB_STEP_SUMMARY
+          echo "- users-update" >> $GITHUB_STEP_SUMMARY

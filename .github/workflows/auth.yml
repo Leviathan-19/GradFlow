@@ -4,45 +4,11 @@ on:
   push:
     branches:
       - QA
-    paths:
-      - "apps/backend/auth/**"
-      - ".github/workflows/auth.yml"
   workflow_dispatch:
-    inputs:
-      build_all:
-        description: 'Build all services regardless of changes (for first-time setup)'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      auth_login: ${{ steps.filter.outputs.auth_login }}
-      auth_rol: ${{ steps.filter.outputs.auth_rol }}
-      auth_me: ${{ steps.filter.outputs.auth_me }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            auth_login:
-              - 'apps/backend/auth/auth_login/**'
-            auth_rol:
-              - 'apps/backend/auth/auth_rol/**'
-            auth_me:
-              - 'apps/backend/auth/auth_me/**'
-
   build-and-push:
-    needs: detect-changes
     runs-on: ubuntu-latest
-    if: |
-      github.event.inputs.build_all == 'true' ||
-      needs.detect-changes.outputs.auth_login == 'true' ||
-      needs.detect-changes.outputs.auth_rol == 'true' ||
-      needs.detect-changes.outputs.auth_me == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -53,45 +19,39 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & Push auth-login
-        if: |
-          github.event.inputs.build_all == 'true' ||
-          needs.detect-changes.outputs.auth_login == 'true'
+      - name: Build all services with docker-compose
+        working-directory: ./apps/backend/auth
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:qa \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:latest \
-            ./apps/backend/auth/auth_login
+          docker compose build
+
+      - name: Tag and Push auth-login
+        run: |
+          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "auth.*auth_login" | head -1)
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:qa
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:qa
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:latest
 
-      - name: Build & Push auth-rol
-        if: |
-          github.event.inputs.build_all == 'true' ||
-          needs.detect-changes.outputs.auth_rol == 'true'
+      - name: Tag and Push auth-rol
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:qa \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:latest \
-            ./apps/backend/auth/auth_rol
+          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "auth.*auth_rol" | head -1)
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:qa
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:qa
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:latest
 
-      - name: Build & Push auth-me
-        if: |
-          github.event.inputs.build_all == 'true' ||
-          needs.detect-changes.outputs.auth_me == 'true'
+      - name: Tag and Push auth-me
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-me:qa \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-me:latest \
-            ./apps/backend/auth/auth_me
+          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "auth.*auth_me" | head -1)
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-me:qa
+          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-me:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-me:qa
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-me:latest
 
       - name: Summary
         run: |
           echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- auth_login: ${{ needs.detect-changes.outputs.auth_login }}" >> $GITHUB_STEP_SUMMARY
-          echo "- auth_rol: ${{ needs.detect-changes.outputs.auth_rol }}" >> $GITHUB_STEP_SUMMARY
-          echo "- auth_me: ${{ needs.detect-changes.outputs.auth_me }}" >> $GITHUB_STEP_SUMMARY
+          echo " All auth services built and pushed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- auth-login" >> $GITHUB_STEP_SUMMARY
+          echo "- auth-rol" >> $GITHUB_STEP_SUMMARY
+          echo "- auth-me" >> $GITHUB_STEP_SUMMARY
