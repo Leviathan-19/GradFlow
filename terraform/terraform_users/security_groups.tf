@@ -1,4 +1,3 @@
-# Security group for Load Balancer
 resource "aws_security_group" "lb" {
   name   = "lb_sg"
   vpc_id = aws_vpc.main.id
@@ -17,14 +16,14 @@ resource "aws_security_group" "lb" {
   }
 }
 
-# Security group para las instancias del ASG
+# SG del ASG (AQUÍ está el cambio)
 resource "aws_security_group" "web" {
   name   = "web_sg"
   vpc_id = aws_vpc.main.id
 
   ingress {
-    from_port       = 80
-    to_port         = 80
+    from_port       = 3001
+    to_port         = 3005
     protocol        = "tcp"
     security_groups = [aws_security_group.lb.id]
   }
@@ -33,8 +32,8 @@ resource "aws_security_group" "web" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # temporal
-    description = "SSH for CI/CD"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "SSH (temporal)"
   }
 
   egress {
@@ -44,4 +43,3 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-
