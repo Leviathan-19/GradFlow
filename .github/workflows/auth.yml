@@ -29,20 +29,9 @@ jobs:
           IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "auth.*auth_login" | head -1)
           docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:qa
           docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:qa
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-login:latest
-
-      - name: Tag and Push auth-rol
-        run: |
-          IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "auth.*auth_rol" | head -1)
-          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:qa
-          docker tag "$IMAGE" ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:qa
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gradflow-auth-rol:latest
 
       - name: Summary
         run: |
           echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
           echo " All auth services built and pushed successfully" >> $GITHUB_STEP_SUMMARY
           echo "- auth-login" >> $GITHUB_STEP_SUMMARY
-          echo "- auth-rol" >> $GITHUB_STEP_SUMMARY
