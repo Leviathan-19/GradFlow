@@ -4,6 +4,13 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerOptions } from './swagger';
 
 const app = express();
+// Middleware para quitar el prefijo que viene del ALB
+app.use((req, _res, next) => {
+  if (req.path.startsWith('/users_list')) {
+    req.url = req.url.replace('/users_list', '');
+  }
+  next();
+});
 
 app.use(express.json());
 

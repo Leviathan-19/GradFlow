@@ -5,6 +5,14 @@ import { swaggerOptions } from './swagger';
 
 const app = express();
 
+// Middleware para quitar el prefijo que viene del ALB
+app.use((req, _res, next) => {
+  if (req.path.startsWith('/users_create')) {
+    req.url = req.url.replace('/users_create', '');
+  }
+  next();
+});
+
 app.use(express.json());
 
 // Health check endpoint

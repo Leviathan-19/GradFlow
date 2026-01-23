@@ -48,17 +48,15 @@ resource "aws_autoscaling_group" "app" {
   }
 
   vpc_zone_identifier = aws_subnet.public[*].id
-  target_group_arns = [
-  aws_lb_target_group.users_create.arn,
-  aws_lb_target_group.users_delete.arn,
-  aws_lb_target_group.users_list.arn,
-  aws_lb_target_group.users_update.arn,
-  aws_lb_target_group.users_search.arn
-]
-
 
   # Asociar a todos los target groups de los microservicios
-  target_group_arns = [for tg in aws_lb_target_group.users : tg.arn]
+  target_group_arns = [
+    aws_lb_target_group.users_create.arn,
+    aws_lb_target_group.users_delete.arn,
+    aws_lb_target_group.users_list.arn,
+    aws_lb_target_group.users_update.arn,
+    aws_lb_target_group.users_search.arn
+  ]
 
   health_check_type         = "EC2"
   health_check_grace_period = 300

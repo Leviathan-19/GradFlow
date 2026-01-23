@@ -27,13 +27,13 @@ resource "aws_lb_target_group" "users_create" {
   target_type = "instance"
 
   health_check {
-  path                = "/api-docs"
-  protocol            = "HTTP"
-  interval            = 30
-  timeout             = 5
-  healthy_threshold   = 2
-  unhealthy_threshold = 3
-}
+    path                = "/api-docs"
+    protocol            = "HTTP"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
 }
 
 resource "aws_lb_target_group" "users_delete" {
@@ -42,14 +42,15 @@ resource "aws_lb_target_group" "users_delete" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"
+
   health_check {
-  path                = "/api-docs"
-  protocol            = "HTTP"
-  interval            = 30
-  timeout             = 5
-  healthy_threshold   = 2
-  unhealthy_threshold = 3
-}
+    path                = "/api-docs"
+    protocol            = "HTTP"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
 }
 
 resource "aws_lb_target_group" "users_list" {
@@ -58,14 +59,15 @@ resource "aws_lb_target_group" "users_list" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"
+
   health_check {
-  path                = "/api-docs"
-  protocol            = "HTTP"
-  interval            = 30
-  timeout             = 5
-  healthy_threshold   = 2
-  unhealthy_threshold = 3
-}
+    path                = "/api-docs"
+    protocol            = "HTTP"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
 }
 
 resource "aws_lb_target_group" "users_update" {
@@ -74,14 +76,15 @@ resource "aws_lb_target_group" "users_update" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"
+
   health_check {
-  path                = "/api-docs"
-  protocol            = "HTTP"
-  interval            = 30
-  timeout             = 5
-  healthy_threshold   = 2
-  unhealthy_threshold = 3
-}
+    path                = "/api-docs"
+    protocol            = "HTTP"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
 }
 
 resource "aws_lb_target_group" "users_search" {
@@ -90,14 +93,15 @@ resource "aws_lb_target_group" "users_search" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"
+
   health_check {
-  path                = "/api-docs"
-  protocol            = "HTTP"
-  interval            = 30
-  timeout             = 5
-  healthy_threshold   = 2
-  unhealthy_threshold = 3
-}
+    path                = "/api-docs"
+    protocol            = "HTTP"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
 }
 
 ########################## ALB LISTENER ###################################
@@ -108,7 +112,7 @@ resource "aws_lb_listener" "http" {
   protocol          = "HTTP"
 
   default_action {
-    type             = "fixed-response"
+    type = "fixed-response"
     fixed_response {
       content_type = "text/plain"
       message_body = "Ruta no encontrada"
@@ -116,6 +120,7 @@ resource "aws_lb_listener" "http" {
     }
   }
 }
+
 ########################## ALB LISTENER RULES ##############################
 
 resource "aws_lb_listener_rule" "users_create_rule" {
@@ -197,4 +202,3 @@ resource "aws_lb_listener_rule" "users_search_rule" {
     }
   }
 }
-
