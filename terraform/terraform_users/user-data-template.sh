@@ -164,7 +164,7 @@ containers=(
   "users-update:\${docker_image_users_update}:3005"
 )
 
-for item in "${containers[@]}"; do
+for item in "\${containers[@]}"; do
   IFS=":" read -r name image port <<< "$item"
 
   echo "Updating $name"
