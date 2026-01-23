@@ -5,8 +5,13 @@ export const swaggerOptions = {
     version: '1.0.0',
     description: 'Get user by ID'
   },
+  servers: [
+    {
+      url: '/users_search/api'
+    }
+    ],
   paths: {
-    '/api/users/{id}': {
+    '/users/{id}': {
       get: {
         summary: 'Get user by id',
         parameters: [

@@ -5,8 +5,13 @@ export const swaggerOptions = {
     version: '1.0.0',
     description: 'Microservice for creating users'
   },
+  servers: [
+    {
+      url: '/users_create/api'
+    }
+    ],
   paths: {
-    '/api/users': {
+    '/users': {
       post: {
         summary: 'Create user',
         requestBody: {

@@ -5,8 +5,13 @@ export const swaggerOptions = {
     version: "1.0.0",
     description: "Search and update user by ID",
   },
+  servers: [
+    {
+      url: "/users_update/api",
+    },
+  ],
   paths: {
-    "/api/users/{id}": {
+    "'/users/{id}':": {
       get: {
         summary: "Get user by ID (for update)",
         parameters: [

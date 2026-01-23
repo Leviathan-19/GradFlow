@@ -5,8 +5,13 @@ export const swaggerOptions = {
     version: '1.0.0',
     description: 'List all users'
   },
+  servers: [
+    {
+      url: '/users_list/api'
+    }
+    ],
   paths: {
-    '/api/users': {
+    '/users': {
       get: {
         summary: 'Get all users',
         responses: {
