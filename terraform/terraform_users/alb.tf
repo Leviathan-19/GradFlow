@@ -6,12 +6,10 @@ resource "aws_lb" "app" {
   subnets            = aws_subnet.public[*].id
   security_groups    = [aws_security_group.lb.id]
 
-  # Habilitar logging de acceso
-  enable_deletion_protection = false
-  enable_http2              = true
+  enable_deletion_protection       = false
+  enable_http2                     = true
   enable_cross_zone_load_balancing = true
 
-  # IP address type
   ip_address_type = "ipv4"
 
   tags = {

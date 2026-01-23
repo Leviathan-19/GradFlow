@@ -57,19 +57,13 @@ resource "aws_autoscaling_group" "app" {
 ]
 
 
-  # Health checks - Changed to EC2 to prevent unnecessary instance replacement
-  # EC2 health checks only check if instance is running, not application health
+  # Asociar a todos los target groups de los microservicios
+  target_group_arns = [for tg in aws_lb_target_group.users : tg.arn]
+
   health_check_type         = "EC2"
   health_check_grace_period = 300
-  
-  # Termination policies - Changed to prevent automatic replacement
-  # Default policy only terminates when scaling down, not on health check failures
-  termination_policies = ["Default"]
-  
-  # Protection against termination - Enable to prevent accidental termination
-  protect_from_scale_in = false
-  
-  # Wait for signals - Give instances more time before considering them unhealthy
+  termination_policies      = ["Default"]
+  protect_from_scale_in     = false
   wait_for_capacity_timeout = "10m"
 
   instance_refresh {
@@ -79,23 +73,21 @@ resource "aws_autoscaling_group" "app" {
       min_healthy_percentage = 50
       instance_warmup        = 180
     }
-    
     triggers = ["tag"]
   }
 
-  # Tags para identificar instancias
   tag {
     key                 = "Name"
     value               = "users-instance"
     propagate_at_launch = true
   }
-  
   tag {
     key                 = "ManagedBy"
     value               = "Terraform"
     propagate_at_launch = true
   }
 }
+
 ###########################################################################
 #################### POLICY AUTOSCALING BY CPU ############################
 ###########################################################################
