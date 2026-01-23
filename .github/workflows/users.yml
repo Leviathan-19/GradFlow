@@ -3,7 +3,7 @@ name: Build & Push Users Domain
 on:
   push:
     branches:
-      - main
+      - Qa
   workflow_dispatch:
 
 jobs:

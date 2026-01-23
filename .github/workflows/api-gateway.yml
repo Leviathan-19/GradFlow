@@ -3,7 +3,7 @@ name: Build & Push API Gateway
 on:
   push:
     branches:
-      - main
+      - Qa
     paths:
       - "apps/backend/api-gateway/**"
       - ".github/workflows/api-gateway.yml"
