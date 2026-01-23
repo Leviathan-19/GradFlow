@@ -4,7 +4,7 @@ import { logServiceCall } from "../middlewares/logging.middleware";
 
 const router = Router();
 
-// File service URLs - configurable via environment variables
+// File service URLs - configurable via environment variables xd
 const FILE_SERVICE_INIT_URL = process.env.FILE_SERVICE_INIT_URL || "http://localhost:3011";
 const FILE_SERVICE_UPDATE_URL = process.env.FILE_SERVICE_UPDATE_URL || "http://localhost:3012";
 const FILE_SERVICE_UPLOAD_URL = process.env.FILE_SERVICE_UPLOAD_URL || "http://localhost:3013";
