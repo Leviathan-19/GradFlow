@@ -1,6 +1,4 @@
-###########################################################################
 ########################## APPLICATION LOAD BALANCER #####################
-###########################################################################
 
 resource "aws_lb" "app" {
   name               = "users-lb"
@@ -21,48 +19,90 @@ resource "aws_lb" "app" {
   }
 }
 
-###########################################################################
-########################## TARGET GROUP ###################################
-###########################################################################
+########################## TARGET GROUPS ###################################
 
-resource "aws_lb_target_group" "app" {
-  name        = "users-tg"
-  port        = 80
+resource "aws_lb_target_group" "users_create" {
+  name        = "tg-users-create"
+  port        = 3001
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"
 
-  # Health check - More lenient to prevent instance termination
-  # Changed to root path and increased thresholds
   health_check {
-    enabled             = true
-    healthy_threshold   = 2
-    unhealthy_threshold = 5  # Increased from 3 to 5 - more tolerance
-    timeout             = 10  # Increased from 5 to 10 seconds
-    interval            = 60  # Increased from 30 to 60 seconds - check less frequently
-    path                = "/"  # Changed from /health to root path (more likely to work)
-    protocol            = "HTTP"
-    matcher             = "200,404"  # Accept both 200 and 404 as healthy
-  }
-
-  # Deregistration delay - Increased to give more time before removing from LB
-  deregistration_delay = 300  # Increased from 30 to 300 seconds (5 minutes)
-
-  # Connection draining
-  stickiness {
-    enabled         = false  # Para balanceo de carga equitativo
-    type            = "lb_cookie"
-    cookie_duration = 86400
-  }
-
-  tags = {
-    Name = "users-target-group"
-  }
+  path                = "/api-docs"
+  protocol            = "HTTP"
+  interval            = 30
+  timeout             = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 3
+}
 }
 
-###########################################################################
+resource "aws_lb_target_group" "users_delete" {
+  name        = "tg-users-delete"
+  port        = 3002
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "instance"
+  health_check {
+  path                = "/api-docs"
+  protocol            = "HTTP"
+  interval            = 30
+  timeout             = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 3
+}
+}
+
+resource "aws_lb_target_group" "users_list" {
+  name        = "tg-users-list"
+  port        = 3003
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "instance"
+  health_check {
+  path                = "/api-docs"
+  protocol            = "HTTP"
+  interval            = 30
+  timeout             = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 3
+}
+}
+
+resource "aws_lb_target_group" "users_update" {
+  name        = "tg-users-update"
+  port        = 3004
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "instance"
+  health_check {
+  path                = "/api-docs"
+  protocol            = "HTTP"
+  interval            = 30
+  timeout             = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 3
+}
+}
+
+resource "aws_lb_target_group" "users_search" {
+  name        = "tg-users-search"
+  port        = 3005
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "instance"
+  health_check {
+  path                = "/api-docs"
+  protocol            = "HTTP"
+  interval            = 30
+  timeout             = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 3
+}
+}
+
 ########################## ALB LISTENER ###################################
-###########################################################################
 
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.app.arn
@@ -70,28 +110,93 @@ resource "aws_lb_listener" "http" {
   protocol          = "HTTP"
 
   default_action {
+    type             = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Ruta no encontrada"
+      status_code  = 404
+    }
+  }
+}
+########################## ALB LISTENER RULES ##############################
+
+resource "aws_lb_listener_rule" "users_create_rule" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 10
+
+  action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.app.arn
+    target_group_arn = aws_lb_target_group.users_create.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/users_create/*"]
+    }
   }
 }
 
-###########################################################################
-########################## ALB LISTENER RULE (OPCIONAL) ###################
-###########################################################################
+resource "aws_lb_listener_rule" "users_delete_rule" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 20
 
-# Ejemplo de regla adicional (puedes agregar más según necesidad)
-# resource "aws_lb_listener_rule" "example" {
-#   listener_arn = aws_lb_listener.http.arn
-#   priority     = 100
-#
-#   action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.app.arn
-#   }
-#
-#   condition {
-#     path_pattern {
-#       values = ["/api/*"]
-#     }
-#   }
-# }
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.users_delete.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/users_delete/*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "users_list_rule" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 30
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.users_list.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/users_list/*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "users_update_rule" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 40
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.users_update.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/users_update/*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "users_search_rule" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 50
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.users_search.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/users_search/*"]
+    }
+  }
+}
+

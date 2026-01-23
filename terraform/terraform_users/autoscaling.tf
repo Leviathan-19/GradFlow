@@ -48,7 +48,14 @@ resource "aws_autoscaling_group" "app" {
   }
 
   vpc_zone_identifier = aws_subnet.public[*].id
-  target_group_arns   = [aws_lb_target_group.app.arn]
+  target_group_arns = [
+  aws_lb_target_group.users_create.arn,
+  aws_lb_target_group.users_delete.arn,
+  aws_lb_target_group.users_list.arn,
+  aws_lb_target_group.users_update.arn,
+  aws_lb_target_group.users_search.arn
+]
+
 
   # Health checks - Changed to EC2 to prevent unnecessary instance replacement
   # EC2 health checks only check if instance is running, not application health

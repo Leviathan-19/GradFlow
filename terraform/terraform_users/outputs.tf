@@ -18,14 +18,29 @@ output "public_subnets" {
   value       = aws_subnet.public[*].id
 }
 
-output "target_group_arn" {
-  description = "ARN del Target Group usado por el ALB"
-  value       = aws_lb_target_group.app.arn
+output "tg_users_create_arn" {
+  description = "ARN del target group users_create"
+  value       = aws_lb_target_group.users_create.arn
 }
 
-output "target_group_name" {
-  description = "Nombre del Target Group"
-  value       = aws_lb_target_group.app.name
+output "tg_users_delete_arn" {
+  description = "ARN del target group users_delete"
+  value       = aws_lb_target_group.users_delete.arn
+}
+
+output "tg_users_list_arn" {
+  description = "ARN del target group users_list"
+  value       = aws_lb_target_group.users_list.arn
+}
+
+output "tg_users_update_arn" {
+  description = "ARN del target group users_update"
+  value       = aws_lb_target_group.users_update.arn
+}
+
+output "tg_users_search_arn" {
+  description = "ARN del target group users_search"
+  value       = aws_lb_target_group.users_search.arn
 }
 
 output "asg_name" {
