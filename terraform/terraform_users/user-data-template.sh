@@ -152,34 +152,34 @@ cat > /home/ubuntu/update-containers.sh <<'EOF'
 #!/bin/bash
 set -e
 
-echo "=== GradFlow update $(date) ==="
+echo "=== GradFlow update $$(date) ==="
 
-docker login -u "\${dockerhub_username}" -p "\${dockerhub_token}" || true
+docker login -u "$$dockerhub_username" -p "$$dockerhub_token" || true
 
 containers=(
-  "users-create:\${docker_image_users_create}:3001"
-  "users-delete:\${docker_image_users_delete}:3002"
-  "users-list:\${docker_image_users_list}:3003"
-  "users-search:\${docker_image_users_search}:3004"
-  "users-update:\${docker_image_users_update}:3005"
+  "users-create:$$docker_image_users_create:3001"
+  "users-delete:$$docker_image_users_delete:3002"
+  "users-list:$$docker_image_users_list:3003"
+  "users-search:$$docker_image_users_search:3004"
+  "users-update:$$docker_image_users_update:3005"
 )
 
-for item in "\${containers[@]}"; do
-  IFS=":" read -r name image port <<< "$item"
+for item in "$${containers[@]}"; do
+  IFS=":" read -r name image port <<< "$$item"
 
-  echo "Updating $name"
+  echo "Updating $$name"
 
-  docker pull "$image" || continue
+  docker pull "$$image" || continue
 
-  docker stop "$name" 2>/dev/null || true
-  docker rm "$name" 2>/dev/null || true
+  docker stop "$$name" 2>/dev/null || true
+  docker rm "$$name" 2>/dev/null || true
 
   docker run -d \
     --restart always \
-    --name "$name" \
-    -p 0.0.0.0:$port:$port \
+    --name "$$name" \
+    -p 0.0.0.0:$$port:$$port \
     --env-file /home/ubuntu/.env \
-    "$image"
+    "$$image"
 done
 
 docker image prune -af
