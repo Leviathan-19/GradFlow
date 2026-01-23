@@ -18,16 +18,16 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Create .env files from Secret
+
+      - name: Create .env and copy to user services
         run: |
-          # Creamos el archivo .env en la raíz y luego lo copiamos a cada carpeta
-          echo "${{ secrets.ENV_FILE }}" > .env
-          cp .env ./users_create/.env
-          cp .env ./users_delete/.env
-          cp .env ./users_list/.env
-          cp .env ./users_search/.env
-          cp .env ./users_update/.env
-          
+         echo "***" > .env
+          cp .env apps/backend/users/users_create/.env
+          cp .env apps/backend/users/users_delete/.env
+          cp .env apps/backend/users/users_list/.env
+          cp .env apps/backend/users/users_search/.env
+          cp .env apps/backend/users/users_update/.env
+
       - name: Build all services with docker-compose
         working-directory: ./apps/backend/users
         run: |
