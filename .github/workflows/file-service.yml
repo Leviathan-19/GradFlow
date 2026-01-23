@@ -3,7 +3,7 @@ name: Build & Push File Service Domain
 on:
   push:
     branches:
-      - QA
+      - main
   workflow_dispatch:
 
 jobs:
