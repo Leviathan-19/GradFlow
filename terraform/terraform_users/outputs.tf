@@ -18,14 +18,14 @@ output "public_subnets" {
   value       = aws_subnet.public[*].id
 }
 
-output "target_group_arn" {
-  description = "ARN del Target Group usado por el ALB"
-  value       = aws_lb_target_group.app.arn
+output "target_groups_arns" {
+  description = "ARNs de los Target Groups de los microservicios"
+  value       = [for tg in aws_lb_target_group.users : tg.arn]
 }
 
-output "target_group_name" {
-  description = "Nombre del Target Group"
-  value       = aws_lb_target_group.app.name
+output "target_groups_names" {
+  description = "Nombres de los Target Groups de los microservicios"
+  value       = [for tg in aws_lb_target_group.users : tg.name]
 }
 
 output "asg_name" {

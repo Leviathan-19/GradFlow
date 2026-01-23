@@ -34,29 +34,24 @@ locals {
 }
 
 resource "aws_lb_target_group" "users" {
-  for_each = local.users_services
-
-  name        = "users-${each.key}-tg"
-  port        = each.value
+  name        = "users-create-tg"
+  port        = 3001
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"
 
   health_check {
     enabled             = true
-    healthy_threshold   = 2
-    unhealthy_threshold = 5
-    timeout             = 10
-    interval            = 60
-    path                = "/api-docs"
-    protocol            = "HTTP"
+    path                = "/api/health"
     matcher             = "200"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
   }
 
-  deregistration_delay = 300
-
   tags = {
-    Name = "users-${each.key}-target-group"
+    Name = "users-create-target-group"
   }
 }
 
@@ -84,26 +79,22 @@ resource "aws_lb_listener" "http" {
 ########################## ALB LISTENER RULES #############################
 ###########################################################################
 
-resource "aws_lb_listener_rule" "users_routes" {
-  for_each = aws_lb_target_group.users
-
+resource "aws_lb_listener_rule" "users_api" {
   listener_arn = aws_lb_listener.http.arn
-  priority     = 100 + index(keys(aws_lb_target_group.users), each.key)
+  priority     = 100
 
   action {
     type             = "forward"
-    target_group_arn = each.value.arn
+    target_group_arn = aws_lb_target_group.users.arn
   }
 
   condition {
     path_pattern {
       values = [
-        each.key == "create" ? "/api/users/create*" :
-        each.key == "delete" ? "/api/users/*/delete*" :
-        each.key == "list"   ? "/api/users" :
-        each.key == "search" ? "/api/users/search*" :
-        "/api/users/*/update*"
+        "/api/*",
+        "/api-docs*"
       ]
     }
   }
 }
+
