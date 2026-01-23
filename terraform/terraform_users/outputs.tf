@@ -48,10 +48,4 @@ output "ssh_command_hint" {
   value       = "ssh -i <ruta-a-tu-pem> ubuntu@<ip_publica-o-elastica>"
 }
 
-# IAM role output deshabilitado para cuentas académicas
-# output "iam_role_arn" {
-#   description = "ARN del IAM role asignado a las instancias"
-#   value       = aws_iam_role.app.arn
-# }
-
 
