@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# GradFlow - Microservices Architecture
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
+GradFlow is a full-stack application built with a microservices architecture, featuring a React frontend and multiple TypeScript/Python backend services orchestrated with Docker.
 
-Currently, two official plugins are available:
+## Backend Services
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1. API Gateway
+- **Stack**: TypeScript, Express
+- **Functionality**:
+  - Central routing for all microservices
+  - Authentication middleware (JWT verification)
+  - Request logging
+- **Structure**:
+  - `src/middlewares/`: Auth and logging handlers
+  - `src/routes/`: Route definitions for all services
 
-## React Compiler
+### 2. Authentication Service
+- **Components**:
+  - **Login**: User authentication with JWT issuance
+  - **Me**: Session management
+  - **Roles**: Role-based access control
+- **Common Features**:
+  - Swagger documentation
+  - PostgreSQL integration
+  - Docker containers
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 3. File Service (Python)
+- **Operations**:
+  - File upload/download
+  - Metadata management
+  - File system initialization
+- **Key Modules**:
+  - Abstract filesystem layer (`filesystem.py`)
+  - Individual Docker setups per operation
 
-## Expanding the ESLint configuration
+### 4. User Management
+- **Microservices**:
+  - User Creation: Registration with validation
+  - User Search: Filtered queries
+  - User Update: Password/account modifications
+  - User Deletion: Soft/hard delete options
+  - User Listing: Paginated results
+- **Security**:
+  - Role-based guards
+  - Auth middleware on all endpoints
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Frontend Application
+- **Stack**: React + TypeScript + Vite
+- **Key Features**:
+  - CRUD operations via API
+  - Modal-based forms
+  - Axios API client
+- **Structure**:
+  - `src/api/`: API connection handlers
+  - `src/components/`: Reusable UI components
+  - Dockerized deployment
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Architecture Highlights
+1. **Microservices Design**:
+   - Independent services with dedicated databases
+   - API Gateway for centralized routing
+   - Docker Compose orchestration
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+2. **Security**:
+   - JWT authentication
+   - Role-based access control
+   - Protected endpoints
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+3. **Development**:
+   - Swagger documentation
+   - TypeScript strict typing
+   - ESLint/Prettier configurations
+
+## Docker Setup
+All services include Docker configurations for:
+- Local development
+- CI/CD pipelines
+- Scalable deployments
+
+```bash
+# Start all services
+docker-compose up --build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Development Notes
+1. Environment variables required for:
+   - Database connections
+   - JWT secret keys
+   - API endpoints
+2. Testing:
+   - Postman collection available
+   - Swagger UI at `/api-docs`
